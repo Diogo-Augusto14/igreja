@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    { %block titulo% }<title>Ministério Redenção | Nossa História</title>{ %endblock% }
+    {% block titulo %}<title>Ministério Redenção | Nossa História</title>{% endblock %}
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,20 +33,10 @@
         </div>
     </header>
 
-    <main>
-        <section id="hero" class="hero-section">
-            <div class="hero-overlay"></div>
-            <div class="container hero-content fade-in">
-                <h2>Lugar de recomeços e esperança</h2>
-                <p>Uma família de fé, conectada pelo propósito de amar a Deus e servir às pessoas. Descubra o seu lugar aqui.</p>
-                <div class="hero-actions">
-                    <a href="#sobre" class="btn-primary">Conheça Nossa História</a>
-                </div>
-            </div>
-        </section>
-{ % block conteudo % }
+    
+{% block conteudo %}
        
-{ %endblock% }
+{% endblock %}
     <footer class="footer">
         <div class="container footer-grid">
             <div class="footer-brand">
