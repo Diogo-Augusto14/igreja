@@ -1,0 +1,36 @@
+{% extends 'painel/base_painel.html' %}
+
+{% block titulo %}Dashboard | Painel{% endblock %}
+{% block pagina_titulo %}Dashboard{% endblock %}
+{% block pagina_subtitulo %}Visão geral do painel administrativo do site.{% endblock %}
+
+{% block conteudo %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <span>Total de ministérios</span>
+        <h3>{{ total_ministerios }}</h3>
+        <p>Quantidade total cadastrada no sistema.</p>
+    </div>
+
+    <div class="stat-card">
+        <span>Ministérios ativos</span>
+        <h3>{{ ministerios_ativos }}</h3>
+        <p>Congregações que estão visíveis no site.</p>
+    </div>
+
+    <div class="stat-card">
+        <span>Ministérios em destaque</span>
+        <h3>{{ ministerios_destaque }}</h3>
+        <p>Itens marcados como destaque.</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-bottom: 12px;">Bem-vindo ao painel</h3>
+    <p style="color: #6b7280; line-height: 1.7;">
+        Esse painel já serve como base para os próximos CRUDs do projeto.
+        Depois você pode repetir essa mesma estrutura para eventos, líderes, banners, galeria,
+        agenda e qualquer outra área administrativa do site.
+    </p>
+</div>
+{% endblock %}

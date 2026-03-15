@@ -1,0 +1,152 @@
+{% extends 'painel/base_painel.html' %}
+
+{% block titulo %}{{ titulo_pagina }} | Painel{% endblock %}
+{% block pagina_titulo %}{{ titulo_pagina }}{% endblock %}
+{% block pagina_subtitulo %}{{ subtitulo_pagina }}{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'painel_ministerios' %}" class="btn btn-light">
+    <i class="fas fa-arrow-left"></i>
+    Voltar
+</a>
+{% endblock %}
+
+{% block conteudo %}
+<div class="card">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="{{ form.nome.id_for_label }}">Nome</label>
+                {{ form.nome }}
+                {{ form.nome.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.slug.id_for_label }}">Slug</label>
+                {{ form.slug }}
+                {{ form.slug.errors }}
+            </div>
+
+            <div class="form-group full">
+                <label for="{{ form.subtitulo.id_for_label }}">Subtítulo</label>
+                {{ form.subtitulo }}
+                {{ form.subtitulo.errors }}
+            </div>
+
+            <div class="form-group full">
+                <label for="{{ form.resumo.id_for_label }}">Resumo</label>
+                {{ form.resumo }}
+                {{ form.resumo.errors }}
+            </div>
+
+            <div class="form-group full">
+                <label for="{{ form.descricao.id_for_label }}">Descrição</label>
+                {{ form.descricao }}
+                {{ form.descricao.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.lider.id_for_label }}">Líder</label>
+                {{ form.lider }}
+                {{ form.lider.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.cargo_lider.id_for_label }}">Cargo do líder</label>
+                {{ form.cargo_lider }}
+                {{ form.cargo_lider.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.local.id_for_label }}">Local</label>
+                {{ form.local }}
+                {{ form.local.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.contato.id_for_label }}">Contato</label>
+                {{ form.contato }}
+                {{ form.contato.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.dia_reuniao.id_for_label }}">Dia da reunião</label>
+                {{ form.dia_reuniao }}
+                {{ form.dia_reuniao.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.horario.id_for_label }}">Horário</label>
+                {{ form.horario }}
+                {{ form.horario.errors }}
+            </div>
+
+            <div class="form-group full">
+                <label for="{{ form.versiculo.id_for_label }}">Versículo</label>
+                {{ form.versiculo }}
+                {{ form.versiculo.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.imagem_capa.id_for_label }}">Imagem de capa</label>
+                {{ form.imagem_capa }}
+                {{ form.imagem_capa.errors }}
+
+                {% if form.instance.imagem_capa %}
+                    <div class="image-preview" style="margin-top: 14px;">
+                        <img src="{{ form.instance.imagem_capa.url }}" alt="Imagem de capa">
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.imagem_principal.id_for_label }}">Imagem principal</label>
+                {{ form.imagem_principal }}
+                {{ form.imagem_principal.errors }}
+
+                {% if form.instance.imagem_principal %}
+                    <div class="image-preview" style="margin-top: 14px;">
+                        <img src="{{ form.instance.imagem_principal.url }}" alt="Imagem principal">
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.ordem.id_for_label }}">Ordem</label>
+                {{ form.ordem }}
+                {{ form.ordem.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Configurações</label>
+                <div class="form-check-row">
+                    <div class="form-check">
+                        {{ form.ativo }}
+                        <label for="{{ form.ativo.id_for_label }}">Ativo</label>
+                    </div>
+
+                    <div class="form-check">
+                        {{ form.destaque }}
+                        <label for="{{ form.destaque.id_for_label }}">Destaque</label>
+                    </div>
+                </div>
+                {{ form.ativo.errors }}
+                {{ form.destaque.errors }}
+            </div>
+        </div>
+
+        <div style="margin-top: 28px; display:flex; gap:12px; flex-wrap:wrap;">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-floppy-disk"></i>
+                {{ texto_botao }}
+            </button>
+
+            <a href="{% url 'painel_ministerios' %}" class="btn btn-light">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

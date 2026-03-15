@@ -1,0 +1,39 @@
+{% extends 'painel/base_painel.html' %}
+
+{% block titulo %}Excluir Ministério | Painel{% endblock %}
+{% block pagina_titulo %}Excluir Ministério{% endblock %}
+{% block pagina_subtitulo %}Confirme a exclusão do item selecionado.{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'painel_ministerios' %}" class="btn btn-light">
+    <i class="fas fa-arrow-left"></i>
+    Voltar
+</a>
+{% endblock %}
+
+{% block conteudo %}
+<div class="card">
+    <div class="danger-box">
+        <strong>Atenção:</strong> essa ação vai excluir o ministério do sistema.
+    </div>
+
+    <h3 style="margin-bottom: 12px;">Você tem certeza que deseja excluir?</h3>
+    <p style="color:#6b7280; margin-bottom: 24px;">
+        Ministério: <strong>{{ ministerio.nome }}</strong>
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button type="submit" class="btn btn-primary" style="background:#b91c1c;">
+                <i class="fas fa-trash"></i>
+                Sim, excluir
+            </button>
+
+            <a href="{% url 'painel_ministerios' %}" class="btn btn-light">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
