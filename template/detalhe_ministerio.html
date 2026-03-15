@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}<title>Ministério | Redenção</title>{% endblock %}
+
+{% block conteudo %}
+<main>
+    <section class="hero-section min-hero" id="min-hero-bg">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content fade-in">
+            <h2 id="min-nome">Carregando...</h2>
+            <p id="min-endereco-curto">Buscando informações...</p>
+        </div>
+    </section>
+
+    <section class="section sobre-section">
+        <div class="container asymetric-layout fade-in">
+            <div class="social-text">
+                <h2>Sobre nossa congregação</h2>
+                <p id="min-descricao">Carregando detalhes do ministério...</p>
+                
+                <div class="info-box">
+                    <h3><i class="fas fa-map-marker-alt"></i> Endereço</h3>
+                    <p id="min-endereco-completo">...</p>
+                </div>
+
+                <div class="info-box">
+                    <h3><i class="fas fa-user-tie"></i> Liderança Local</h3>
+                    <p id="min-pastor">...</p>
+                </div>
+                
+                <div class="info-box">
+                    <h3><i class="fas fa-clock"></i> Horários dos Cultos</h3>
+                    <p id="min-horarios">...</p>
+                </div>
+            </div>
+            <div class="social-image">
+                <img id="min-imagem" src="" alt="Imagem do Ministério" style="display: none;">
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}<title>Nossos Ministérios | Ministério Redenção</title>{% endblock %}
+
+{% block conteudo %}
+<main>
+    <section class="section bg-light" style="padding-top: 120px;">
+        <div class="container fade-in">
+            <div class="section-header">
+                <h2>Nossos Ministérios</h2>
+                <p>O Ministério Redenção está presente em várias regiões. Encontre a igreja mais próxima de você.</p>
+            </div>
+            
+            <div id="ministerios-grid" class="ministerios-grid">
+                <a href="{% url 'detalhe_ministerio' %}"></a>
+                </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
