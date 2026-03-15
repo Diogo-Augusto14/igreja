@@ -1,20 +1,64 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block titulo %}<title>Nossos Ministérios | Ministério Redenção</title>{% endblock %}
+{% block titulo %}
+<title>Nossos Ministérios | Ministério Redenção</title>
+{% endblock %}
 
 {% block conteudo %}
 <main>
-    <section class="section bg-light" style="padding-top: 120px;">
+    <section class="section bg-light ministerio-page-section">
         <div class="container fade-in">
             <div class="section-header">
                 <h2>Nossos Ministérios</h2>
-                <p>O Ministério Redenção está presente em várias regiões. Encontre a igreja mais próxima de você.</p>
+                <p>
+                    O Ministério Redenção está presente em várias regiões. 
+                    Encontre a congregação mais próxima de você.
+                </p>
             </div>
-            
-            <div id="ministerios-grid" class="ministerios-grid">
-                <a href="{% url 'detalhe_ministerio' %}"></a>
-                </div>
+
+            <div class="ministerios-grid">
+                {% for ministerio in ministerios %}
+                    <article class="ministerio-card">
+                        <a href="{% url 'detalhe_ministerio' ministerio.slug %}" class="ministerio-card-link">
+                            <div class="ministerio-card-image-wrapper">
+                                <img 
+                                    src="{{ ministerio.imagem_capa.url }}" 
+                                    alt="{{ ministerio.nome }}"
+                                >
+                            </div>
+
+                            <div class="ministerio-card-content">
+                                <h3>{{ ministerio.nome }}</h3>
+
+                                {% if ministerio.subtitulo %}
+                                    <span class="ministerio-subtitulo">{{ ministerio.subtitulo }}</span>
+                                {% endif %}
+
+                                <p>{{ ministerio.resumo }}</p>
+
+                                <div class="ministerio-meta">
+                                    <span><i class="fas fa-map-marker-alt"></i> {{ ministerio.local }}</span>
+
+                                    {% if ministerio.dia_reuniao %}
+                                        <span><i class="fas fa-calendar-alt"></i> {{ ministerio.dia_reuniao }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <span class="btn-outline ministerio-btn">Ver detalhes</span>
+                            </div>
+                        </a>
+                    </article>
+                {% empty %}
+                    <div class="sem-ministerios">
+                        <h3>Nenhum ministério cadastrado ainda.</h3>
+                        <p>
+                            Assim que você adicionar ministérios no banco de dados, 
+                            eles aparecerão automaticamente aqui.
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </section>
 </main>

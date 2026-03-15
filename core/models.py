@@ -1,8 +1,10 @@
 from django.db import models
+from django.utils.text import slugify
+
 
 class Ministerio(models.Model):
     nome = models.CharField(max_length=150)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, blank=True)
     subtitulo = models.CharField(max_length=200, blank=True)
     resumo = models.CharField(max_length=300)
     descricao = models.TextField()
@@ -28,3 +30,17 @@ class Ministerio(models.Model):
 
     def __str__(self):
         return self.nome
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            slug_base = slugify(self.nome)
+            slug = slug_base
+            contador = 1
+
+            while Ministerio.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f'{slug_base}-{contador}'
+                contador += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)

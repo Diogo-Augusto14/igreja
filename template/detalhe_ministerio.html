@@ -1,15 +1,25 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block titulo %}<title>Ministério | Redenção</title>{% endblock %}
+{% block titulo %}
+<title>{{ ministerio.nome }} | Ministério Redenção</title>
+{% endblock %}
 
 {% block conteudo %}
 <main>
-    <section class="hero-section min-hero" id="min-hero-bg">
+    <section 
+        class="hero-section min-hero"
+        style="background-image: url('{{ ministerio.imagem_capa.url }}');"
+    >
         <div class="hero-overlay"></div>
         <div class="container hero-content fade-in">
-            <h2 id="min-nome">Carregando...</h2>
-            <p id="min-endereco-curto">Buscando informações...</p>
+            <h2>{{ ministerio.nome }}</h2>
+
+            {% if ministerio.subtitulo %}
+                <p>{{ ministerio.subtitulo }}</p>
+            {% else %}
+                <p>{{ ministerio.local }}</p>
+            {% endif %}
         </div>
     </section>
 
@@ -17,25 +27,51 @@
         <div class="container asymetric-layout fade-in">
             <div class="social-text">
                 <h2>Sobre nossa congregação</h2>
-                <p id="min-descricao">Carregando detalhes do ministério...</p>
-                
+                <p>{{ ministerio.descricao }}</p>
+
                 <div class="info-box">
-                    <h3><i class="fas fa-map-marker-alt"></i> Endereço</h3>
-                    <p id="min-endereco-completo">...</p>
+                    <h3><i class="fas fa-map-marker-alt"></i> Local</h3>
+                    <p>{{ ministerio.local }}</p>
                 </div>
 
                 <div class="info-box">
                     <h3><i class="fas fa-user-tie"></i> Liderança Local</h3>
-                    <p id="min-pastor">...</p>
+                    <p>
+                        {{ ministerio.lider }}
+                        {% if ministerio.cargo_lider %}
+                            - {{ ministerio.cargo_lider }}
+                        {% endif %}
+                    </p>
                 </div>
-                
-                <div class="info-box">
-                    <h3><i class="fas fa-clock"></i> Horários dos Cultos</h3>
-                    <p id="min-horarios">...</p>
-                </div>
+
+                {% if ministerio.dia_reuniao or ministerio.horario %}
+                    <div class="info-box">
+                        <h3><i class="fas fa-clock"></i> Reuniões</h3>
+                        <p>
+                            {% if ministerio.dia_reuniao %}{{ ministerio.dia_reuniao }}{% endif %}
+                            {% if ministerio.dia_reuniao and ministerio.horario %} às {% endif %}
+                            {% if ministerio.horario %}{{ ministerio.horario }}{% endif %}
+                        </p>
+                    </div>
+                {% endif %}
+
+                {% if ministerio.contato %}
+                    <div class="info-box">
+                        <h3><i class="fas fa-phone-alt"></i> Contato</h3>
+                        <p>{{ ministerio.contato }}</p>
+                    </div>
+                {% endif %}
+
+                {% if ministerio.versiculo %}
+                    <div class="info-box">
+                        <h3><i class="fas fa-book-bible"></i> Versículo</h3>
+                        <p>{{ ministerio.versiculo }}</p>
+                    </div>
+                {% endif %}
             </div>
+
             <div class="social-image">
-                <img id="min-imagem" src="" alt="Imagem do Ministério" style="display: none;">
+                <img src="{{ ministerio.imagem_principal.url }}" alt="{{ ministerio.nome }}">
             </div>
         </div>
     </section>
