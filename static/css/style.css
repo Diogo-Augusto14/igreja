@@ -193,7 +193,7 @@ ul {
     min-height: 600px;
     display: flex;
     align-items: center;
-    background-image: url('logo.png');
+    background-image: url("../image/logo.png");
     background-size: cover;
     background-position: center 19%;
     background-repeat: no-repeat;
