@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ministério Redenção | Nossa História</title>
+    { %block titulo% }<title>Ministério Redenção | Nossa História</title>{ %endblock% }
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -127,7 +127,7 @@
             </div>
         </section>
     </main>
-
+{ %endblock% }
     <footer class="footer">
         <div class="container footer-grid">
             <div class="footer-brand">
@@ -163,6 +163,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>
