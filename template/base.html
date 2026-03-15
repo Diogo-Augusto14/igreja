@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD:template/index.html
+    <title>Ministério Redenção | Casa de Paternidade</title>
+=======
+    { %block titulo% }<title>Ministério Redenção | Nossa História</title>{ %endblock% }
+>>>>>>> 07396d1deda58d5353ab29906200afc889b1413a:template/home.html
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <h1>Redenção</h1>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Abrir Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-links">
+                <a href="#hero">Início</a>
+                <a href="#sobre">Quem Somos</a>
+                <a href="#Ministerios">Ministerios</a>
+                <a href="#social">Ação Social</a>
+                <a href="#galeria">Nossa Vida</a>
+            </nav>
+            <a href="#assista" class="btn-primary"><i class="fas fa-play-circle"></i> Assista Online</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="hero-section">
+            <div class="hero-overlay"></div>
+            <div class="container hero-content fade-in">
+                <h2>Lugar de recomeços e esperança</h2>
+                <p>Uma família de fé, conectada pelo propósito de amar a Deus e servir às pessoas. Descubra o seu lugar aqui.</p>
+                <div class="hero-actions">
+                    <a href="#sobre" class="btn-primary">Conheça Nossa História</a>
+                </div>
+            </div>
+        </section>
+{ % block conteudo % }
+       
+{ %endblock% }
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <h2>Redenção</h2>
+                <p>Uma igreja conectada com o propósito de amar a Deus e servir às pessoas em nossa cidade.</p>
+                <div class="social-icons">
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-links">
+                <h3>Links Úteis</h3>
+                <ul>
+                    <li><a href="#sobre">Nossa História</a></li>
+                    <li><a href="#lideranca">Liderança</a></li>
+                    <li><a href="#social">Projetos Sociais</a></li>
+                    <li><a href="programacao.html">Programação</a></li>
+                    <li><a href="eventos.html">Eventos</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h3>Contato</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Av. Principal, 1000 - Centro</p>
+                <p><i class="fas fa-envelope"></i> contato@ministerioredencao.org</p>
+                <p><i class="fas fa-phone"></i> (00) 1234-5678</p>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>&copy; 2024 Ministério Redenção. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
