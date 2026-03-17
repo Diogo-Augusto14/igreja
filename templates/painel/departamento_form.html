@@ -38,9 +38,9 @@
             </div>
 
             <div class="form-group">
-                <label for="{{ form.lider.id_for_label }}">Responsável</label>
-                {{ form.lider }}
-                {{ form.lider.errors }}
+                <label for="{{ form.ordem.id_for_label }}">Ordem</label>
+                {{ form.ordem }}
+                {{ form.ordem.errors }}
             </div>
 
             <div class="form-group full">
@@ -48,9 +48,46 @@
                 {{ form.descricao }}
                 {{ form.descricao.errors }}
             </div>
+        </div>
+
+        <div class="painel-section-title form-block-space">
+            <h3>Casal líder do departamento</h3>
+            <p>Cada departamento também será apresentado com seu casal responsável.</p>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="{{ form.lider_nome.id_for_label }}">Líder</label>
+                {{ form.lider_nome }}
+                {{ form.lider_nome.errors }}
+            </div>
 
             <div class="form-group">
-                <label for="{{ form.imagem.id_for_label }}">Imagem</label>
+                <label for="{{ form.lider_nome_esposa.id_for_label }}">Líder (esposa)</label>
+                {{ form.lider_nome_esposa }}
+                {{ form.lider_nome_esposa.errors }}
+            </div>
+
+            <div class="form-group full">
+                <label for="{{ form.foto_lideranca.id_for_label }}">Foto do casal líder</label>
+                {{ form.foto_lideranca }}
+                {{ form.foto_lideranca.errors }}
+
+                {% if form.instance.foto_lideranca %}
+                    <div class="image-preview" style="margin-top: 14px;">
+                        <img src="{{ form.instance.foto_lideranca.url }}" alt="{{ form.instance.nome }}">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="painel-section-title form-block-space">
+            <h3>Imagem e status</h3>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="{{ form.imagem.id_for_label }}">Imagem do departamento</label>
                 {{ form.imagem }}
                 {{ form.imagem.errors }}
 
@@ -59,12 +96,6 @@
                         <img src="{{ form.instance.imagem.url }}" alt="{{ form.instance.nome }}">
                     </div>
                 {% endif %}
-            </div>
-
-            <div class="form-group">
-                <label for="{{ form.ordem.id_for_label }}">Ordem</label>
-                {{ form.ordem }}
-                {{ form.ordem.errors }}
             </div>
 
             <div class="form-group">
@@ -81,8 +112,7 @@
 
         <div class="painel-alert painel-alert-info">
             <strong>Dica:</strong>
-            cada igreja pode ter departamentos diferentes. Essa estrutura foi feita
-            para ficar totalmente dinâmica.
+            na página pública vai aparecer o departamento e, abaixo dele, o casal responsável com foto redonda.
         </div>
 
         <div style="margin-top: 28px; display:flex; gap:12px; flex-wrap:wrap;">

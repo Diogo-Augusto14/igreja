@@ -2,7 +2,7 @@
 
 {% block titulo %}Departamentos | Painel{% endblock %}
 {% block pagina_titulo %}Departamentos das igrejas{% endblock %}
-{% block pagina_subtitulo %}Gerencie louvor, infantil, mídia, jovens e qualquer outro departamento.{% endblock %}
+{% block pagina_subtitulo %}Gerencie louvor, infantil, mídia, jovens e outros departamentos.{% endblock %}
 
 {% block topbar_actions %}
 <a href="{% url 'criar_departamento' %}" class="btn btn-primary">
@@ -49,7 +49,7 @@
                         <th>Imagem</th>
                         <th>Departamento</th>
                         <th>Igreja</th>
-                        <th>Líder</th>
+                        <th>Casal líder</th>
                         <th>Ordem</th>
                         <th>Status</th>
                         <th>Ações</th>
@@ -76,11 +76,7 @@
                             <span style="color:#6b7280;font-size:0.86rem;">{{ departamento.ministerio.local }}</span>
                         </td>
                         <td>
-                            {% if departamento.lider %}
-                                {{ departamento.lider }}
-                            {% else %}
-                                <span style="color:#94a3b8;">Não informado</span>
-                            {% endif %}
+                            {{ departamento.lider_nome }} e {{ departamento.lider_nome_esposa }}
                         </td>
                         <td>{{ departamento.ordem }}</td>
                         <td>

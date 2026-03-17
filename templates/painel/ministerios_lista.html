@@ -31,7 +31,7 @@
                         <th>Imagem</th>
                         <th>Igreja</th>
                         <th>Local</th>
-                        <th>Responsável</th>
+                        <th>Casal pastoral</th>
                         <th>URL</th>
                         <th>Status</th>
                         <th>Destaque</th>
@@ -52,13 +52,30 @@
                         </td>
                         <td>
                             <strong>{{ ministerio.nome }}</strong><br>
-                            <span style="color:#6b7280;font-size:0.9rem;">{{ ministerio.resumo|truncatechars:70 }}</span>
+                            <span style="color:#6b7280;font-size:0.9rem;">
+                                {% if ministerio.resumo %}
+                                    {{ ministerio.resumo|truncatechars:70 }}
+                                {% else %}
+                                    Sem resumo cadastrado
+                                {% endif %}
+                            </span>
                         </td>
-                        <td>{{ ministerio.local }}</td>
                         <td>
-                            {{ ministerio.lider }}
-                            {% if ministerio.cargo_lider %}
-                                <br><span style="color:#6b7280;font-size:0.85rem;">{{ ministerio.cargo_lider }}</span>
+                            {% if ministerio.local %}
+                                {{ ministerio.local }}
+                            {% else %}
+                                <span style="color:#94a3b8;">Não informado</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if ministerio.pastor_nome or ministerio.pastora_nome %}
+                                <strong>
+                                    {% if ministerio.pastor_nome %}Pr. {{ ministerio.pastor_nome }}{% endif %}
+                                    {% if ministerio.pastor_nome and ministerio.pastora_nome %} &amp; {% endif %}
+                                    {% if ministerio.pastora_nome %}Pra. {{ ministerio.pastora_nome }}{% endif %}
+                                </strong>
+                            {% else %}
+                                <span style="color:#94a3b8;">Não informado</span>
                             {% endif %}
                         </td>
                         <td>

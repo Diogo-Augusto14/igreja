@@ -6,18 +6,38 @@ class Ministerio(models.Model):
     nome = models.CharField(max_length=150)
     slug = models.SlugField(unique=True, blank=True)
     subtitulo = models.CharField(max_length=200, blank=True)
-    resumo = models.CharField(max_length=300)
-    descricao = models.TextField()
-    lider = models.CharField(max_length=120)
-    cargo_lider = models.CharField(max_length=120, blank=True)
-    local = models.CharField(max_length=200)
+    resumo = models.CharField(max_length=300, blank=True, null=True)
+    descricao = models.TextField(blank=True, null=True)
+
+    pastor_nome = models.CharField(max_length=120, blank=True, null=True)
+    pastora_nome = models.CharField(max_length=120, blank=True, null=True)
+
+    foto_casal_lideranca = models.ImageField(
+        upload_to='ministerios/lideranca/',
+        blank=True,
+        null=True
+    )
+
+    local = models.CharField(max_length=200, blank=True, null=True)
     contato = models.CharField(max_length=50, blank=True)
     versiculo = models.CharField(max_length=255, blank=True)
-    imagem_capa = models.ImageField(upload_to='ministerios/capas/')
-    imagem_principal = models.ImageField(upload_to='ministerios/principais/')
+
+    imagem_capa = models.ImageField(
+        upload_to='ministerios/capas/',
+        blank=True,
+        null=True
+    )
+
+    imagem_principal = models.ImageField(
+        upload_to='ministerios/principais/',
+        blank=True,
+        null=True
+    )
+
     ativo = models.BooleanField(default=True)
     destaque = models.BooleanField(default=False)
     ordem = models.PositiveIntegerField(default=0)
+
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
@@ -72,10 +92,34 @@ class Departamento(models.Model):
         on_delete=models.CASCADE,
         related_name='departamentos'
     )
+
     nome = models.CharField(max_length=150)
-    descricao = models.TextField()
-    imagem = models.ImageField(upload_to='departamentos/')
-    lider = models.CharField(max_length=120, blank=True)
+    descricao = models.TextField(blank=True, null=True)
+
+    imagem = models.ImageField(
+        upload_to='departamentos/',
+        blank=True,
+        null=True
+    )
+
+    lider_nome = models.CharField(
+        max_length=120,
+        blank=True,
+        null=True
+    )
+
+    lider_nome_esposa = models.CharField(
+        max_length=120,
+        blank=True,
+        null=True
+    )
+
+    foto_lideranca = models.ImageField(
+        upload_to='departamentos/lideranca/',
+        blank=True,
+        null=True
+    )
+
     ordem = models.PositiveIntegerField(default=0)
     ativo = models.BooleanField(default=True)
     criado_em = models.DateTimeField(auto_now_add=True)

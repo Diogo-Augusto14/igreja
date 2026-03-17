@@ -7,11 +7,6 @@
     <title>{% block titulo %}Painel de Controle{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/style_painel.css' %}">
-
-    <style>
-        
-    </style>
-
     {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -35,12 +30,12 @@
                     Igrejas
                 </a>
 
-                <a href="#">
+                <a href="{% url 'painel_cultos' %}" class="{% if request.resolver_match.url_name == 'painel_cultos' or request.resolver_match.url_name == 'criar_culto' or request.resolver_match.url_name == 'editar_culto' or request.resolver_match.url_name == 'excluir_culto' %}active{% endif %}">
                     <i class="fas fa-clock"></i>
                     Cultos
                 </a>
 
-                <a href="#">
+                <a href="{% url 'painel_departamentos' %}" class="{% if request.resolver_match.url_name == 'painel_departamentos' or request.resolver_match.url_name == 'criar_departamento' or request.resolver_match.url_name == 'editar_departamento' or request.resolver_match.url_name == 'excluir_departamento' %}active{% endif %}">
                     <i class="fas fa-users"></i>
                     Departamentos
                 </a>

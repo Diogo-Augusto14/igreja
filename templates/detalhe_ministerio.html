@@ -40,16 +40,6 @@
                             <p>{{ ministerio.local }}</p>
                         </div>
 
-                        <div class="info-box">
-                            <h3><i class="fas fa-user-tie"></i> Liderança</h3>
-                            <p>
-                                {{ ministerio.lider }}
-                                {% if ministerio.cargo_lider %}
-                                    - {{ ministerio.cargo_lider }}
-                                {% endif %}
-                            </p>
-                        </div>
-
                         {% if ministerio.contato %}
                         <div class="info-box">
                             <h3><i class="fas fa-phone-alt"></i> Contato</h3>
@@ -76,16 +66,36 @@
     <section class="section bg-light fade-in">
         <div class="container">
             <div class="section-header">
+                <h2>Casal pastoral</h2>
+                <p>Conheça o casal responsável pela liderança desta igreja.</p>
+            </div>
+
+            <div class="lideranca-casal-wrap">
+                <article class="casal-card">
+                    <div class="casal-card-avatar">
+                        <img src="{{ ministerio.foto_casal_lideranca.url }}" alt="{{ ministerio.pastor_nome }} e {{ ministerio.pastora_nome }}">
+                    </div>
+
+                    <div class="casal-card-content">
+                        <span class="casal-badge">Liderança pastoral</span>
+                        <h3>Pr. {{ ministerio.pastor_nome }} &amp; Pra. {{ ministerio.pastora_nome }}</h3>
+                        <p>Casal pastoral responsável por conduzir e cuidar desta congregação.</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section bg-light fade-in">
+        <div class="container">
+            <div class="section-header">
                 <h2>Horários e cultos</h2>
-                <p>
-                    Aqui você pode apresentar todos os dias, horários e tipos de reunião
-                    da congregação de forma organizada.
-                </p>
+                <p>Aqui você pode apresentar todos os dias, horários e tipos de reunião da congregação.</p>
             </div>
 
             <div class="cultos-grid">
-                {% if ministerio.cultos.all %}
-                    {% for culto in ministerio.cultos.all %}
+                {% for culto in ministerio.cultos.all %}
+                    {% if culto.ativo %}
                         <article class="culto-card">
                             <div class="culto-dia">
                                 <i class="fas fa-calendar-day"></i>
@@ -100,8 +110,8 @@
                                 <p>Reunião da igreja.</p>
                             {% endif %}
                         </article>
-                    {% endfor %}
-                {% else %}
+                    {% endif %}
+                {% empty %}
                     <article class="culto-card culto-card-vazio">
                         <div class="culto-dia">
                             <i class="fas fa-calendar-day"></i>
@@ -110,25 +120,7 @@
                         <h3>Domingo - 18:00</h3>
                         <p>Adicione os cultos no painel para mostrar todos os horários dinamicamente.</p>
                     </article>
-
-                    <article class="culto-card culto-card-vazio">
-                        <div class="culto-dia">
-                            <i class="fas fa-calendar-day"></i>
-                            <span>Exemplo</span>
-                        </div>
-                        <h3>Domingo - 19:00</h3>
-                        <p>Oração, culto principal, ensino, jovens, infantil e o que mais precisar.</p>
-                    </article>
-
-                    <article class="culto-card culto-card-vazio">
-                        <div class="culto-dia">
-                            <i class="fas fa-calendar-day"></i>
-                            <span>Exemplo</span>
-                        </div>
-                        <h3>Quinta - 19:30</h3>
-                        <p>Essa área já fica pronta para receber vários horários por igreja.</p>
-                    </article>
-                {% endif %}
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -137,14 +129,12 @@
         <div class="container">
             <div class="section-header">
                 <h2>Departamentos desta congregação</h2>
-                <p>
-                    Cada igreja pode ter seus próprios departamentos, líderes, equipes e fotos.
-                </p>
+                <p>Cada departamento pode ter sua imagem, descrição e casal líder.</p>
             </div>
 
             <div class="departamentos-grid">
-                {% if ministerio.departamentos.all %}
-                    {% for departamento in ministerio.departamentos.all %}
+                {% for departamento in ministerio.departamentos.all %}
+                    {% if departamento.ativo %}
                         <article class="departamento-card">
                             <div class="departamento-img-wrap">
                                 <img src="{{ departamento.imagem.url }}" alt="{{ departamento.nome }}">
@@ -154,10 +144,21 @@
                                 <span class="departamento-badge">Departamento</span>
                                 <h3>{{ departamento.nome }}</h3>
                                 <p>{{ departamento.descricao }}</p>
+
+                                <div class="departamento-lideranca">
+                                    <div class="departamento-lideranca-foto">
+                                        <img src="{{ departamento.foto_lideranca.url }}" alt="{{ departamento.lider_nome }} e {{ departamento.lider_nome_esposa }}">
+                                    </div>
+
+                                    <div class="departamento-lideranca-texto">
+                                        <small>Líderes</small>
+                                        <strong>{{ departamento.lider_nome }} e {{ departamento.lider_nome_esposa }}</strong>
+                                    </div>
+                                </div>
                             </div>
                         </article>
-                    {% endfor %}
-                {% else %}
+                    {% endif %}
+                {% empty %}
                     <article class="departamento-card departamento-card-vazio">
                         <div class="departamento-img-wrap">
                             <img src="{% static 'image/logo.png' %}" alt="Departamento">
@@ -168,29 +169,7 @@
                             <p>Cadastre os departamentos no painel para mostrar as equipes e a importância de cada área da igreja.</p>
                         </div>
                     </article>
-
-                    <article class="departamento-card departamento-card-vazio">
-                        <div class="departamento-img-wrap">
-                            <img src="{% static 'image/logo.png' %}" alt="Departamento">
-                        </div>
-                        <div class="departamento-card-content">
-                            <span class="departamento-badge">Exemplo</span>
-                            <h3>Louvor</h3>
-                            <p>Você poderá adicionar foto, nome, descrição e a ligação com a congregação correta.</p>
-                        </div>
-                    </article>
-
-                    <article class="departamento-card departamento-card-vazio">
-                        <div class="departamento-img-wrap">
-                            <img src="{% static 'image/logo.png' %}" alt="Departamento">
-                        </div>
-                        <div class="departamento-card-content">
-                            <span class="departamento-badge">Exemplo</span>
-                            <h3>Mídia</h3>
-                            <p>Essa seção foi preparada para ficar dinâmica e mais completa do que a tela antiga.</p>
-                        </div>
-                    </article>
-                {% endif %}
+                {% endfor %}
             </div>
         </div>
     </section>

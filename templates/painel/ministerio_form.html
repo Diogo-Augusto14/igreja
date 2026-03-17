@@ -54,23 +54,42 @@
         </div>
 
         <div class="painel-section-title form-block-space">
-            <h3>Identidade e liderança</h3>
-            <p>Essas informações ajudam a apresentar melhor a igreja para quem visitar o site.</p>
+            <h3>Casal pastoral</h3>
+            <p>Cada igreja terá seu casal pastoral como liderança principal.</p>
         </div>
 
         <div class="form-grid">
             <div class="form-group">
-                <label for="{{ form.lider.id_for_label }}">Responsável / líder</label>
-                {{ form.lider }}
-                {{ form.lider.errors }}
+                <label for="{{ form.pastor_nome.id_for_label }}">Pastor</label>
+                {{ form.pastor_nome }}
+                {{ form.pastor_nome.errors }}
             </div>
 
             <div class="form-group">
-                <label for="{{ form.cargo_lider.id_for_label }}">Cargo do responsável</label>
-                {{ form.cargo_lider }}
-                {{ form.cargo_lider.errors }}
+                <label for="{{ form.pastora_nome.id_for_label }}">Pastora</label>
+                {{ form.pastora_nome }}
+                {{ form.pastora_nome.errors }}
             </div>
 
+            <div class="form-group full">
+                <label for="{{ form.foto_casal_lideranca.id_for_label }}">Foto do casal pastoral</label>
+                {{ form.foto_casal_lideranca }}
+                {{ form.foto_casal_lideranca.errors }}
+
+                {% if form.instance.foto_casal_lideranca %}
+                    <div class="image-preview" style="margin-top: 14px;">
+                        <img src="{{ form.instance.foto_casal_lideranca.url }}" alt="Casal pastoral">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="painel-section-title form-block-space">
+            <h3>Informações gerais</h3>
+            <p>Essas informações ajudam a apresentar melhor a igreja para quem visitar o site.</p>
+        </div>
+
+        <div class="form-grid">
             <div class="form-group">
                 <label for="{{ form.local.id_for_label }}">Local / endereço / bairro</label>
                 {{ form.local }}
@@ -149,11 +168,6 @@
                 {{ form.ativo.errors }}
                 {{ form.destaque.errors }}
             </div>
-        </div>
-
-        <div class="painel-alert painel-alert-info">
-            <strong>Próximo passo:</strong>
-            depois vamos ligar aqui os blocos de cultos e departamentos para cada igreja ficar completa e dinâmica.
         </div>
 
         <div style="margin-top: 28px; display:flex; gap:12px; flex-wrap:wrap;">

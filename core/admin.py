@@ -4,9 +4,23 @@ from .models import Culto, Departamento, Ministerio
 
 @admin.register(Ministerio)
 class MinisterioAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'local', 'lider', 'ativo', 'destaque', 'ordem')
+    list_display = (
+        'nome',
+        'local',
+        'pastor_nome',
+        'pastora_nome',
+        'ativo',
+        'destaque',
+        'ordem',
+    )
     list_filter = ('ativo', 'destaque')
-    search_fields = ('nome', 'local', 'lider', 'slug')
+    search_fields = (
+        'nome',
+        'local',
+        'pastor_nome',
+        'pastora_nome',
+        'slug',
+    )
     prepopulated_fields = {'slug': ('nome',)}
     ordering = ('ordem', 'nome')
 
@@ -21,7 +35,19 @@ class CultoAdmin(admin.ModelAdmin):
 
 @admin.register(Departamento)
 class DepartamentoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'ministerio', 'lider', 'ativo', 'ordem')
+    list_display = (
+        'nome',
+        'ministerio',
+        'lider_nome',
+        'lider_nome_esposa',
+        'ativo',
+        'ordem',
+    )
     list_filter = ('ativo', 'ministerio')
-    search_fields = ('nome', 'ministerio__nome', 'lider')
+    search_fields = (
+        'nome',
+        'ministerio__nome',
+        'lider_nome',
+        'lider_nome_esposa',
+    )
     ordering = ('ministerio', 'ordem', 'nome')
