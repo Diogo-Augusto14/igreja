@@ -1,5 +1,5 @@
 from django import forms
-from .models import Ministerio
+from .models import Culto, Departamento, Ministerio
 
 
 class MinisterioForm(forms.ModelForm):
@@ -14,8 +14,6 @@ class MinisterioForm(forms.ModelForm):
             'lider',
             'cargo_lider',
             'local',
-            'dia_reuniao',
-            'horario',
             'contato',
             'versiculo',
             'imagem_capa',
@@ -25,17 +23,15 @@ class MinisterioForm(forms.ModelForm):
             'ordem',
         ]
         widgets = {
-            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Redenção Sagrada Família'}),
-            'slug': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: redencao-sagrada-familia'}),
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Ministério Redenção Sagrada Família'}),
+            'slug': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: ministerio-redencao-sagrada-familia'}),
             'subtitulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Uma igreja para toda a família'}),
-            'resumo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Resumo curto para aparecer no card'}),
-            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 6, 'placeholder': 'Descrição completa do ministério'}),
-            'lider': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do líder'}),
+            'resumo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Resumo curto para o card'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 6, 'placeholder': 'Descrição completa da congregação'}),
+            'lider': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do líder ou responsável'}),
             'cargo_lider': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Pastor dirigente'}),
-            'local': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Endereço ou bairro'}),
-            'dia_reuniao': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Quarta e Domingo'}),
-            'horario': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 19:30'}),
-            'contato': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone ou WhatsApp'}),
+            'local': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Bairro Sagrada Família - Divinópolis/MG'}),
+            'contato': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone / WhatsApp'}),
             'versiculo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: João 3:16'}),
             'imagem_capa': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'imagem_principal': forms.ClearableFileInput(attrs={'class': 'form-control'}),
@@ -52,6 +48,50 @@ class MinisterioForm(forms.ModelForm):
             qs = qs.exclude(pk=self.instance.pk)
 
         if qs.exists():
-            raise forms.ValidationError('Já existe um ministério com esse slug.')
+            raise forms.ValidationError('Já existe uma igreja com esse slug.')
 
         return slug
+
+
+class CultoForm(forms.ModelForm):
+    class Meta:
+        model = Culto
+        fields = [
+            'ministerio',
+            'dia',
+            'horario',
+            'descricao',
+            'ordem',
+            'ativo',
+        ]
+        widgets = {
+            'ministerio': forms.Select(attrs={'class': 'form-control'}),
+            'dia': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Domingo'}),
+            'horario': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 18:00 Oração / 19:00 Culto'}),
+            'descricao': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Culto principal da semana'}),
+            'ordem': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0'}),
+            'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+
+class DepartamentoForm(forms.ModelForm):
+    class Meta:
+        model = Departamento
+        fields = [
+            'ministerio',
+            'nome',
+            'descricao',
+            'imagem',
+            'lider',
+            'ordem',
+            'ativo',
+        ]
+        widgets = {
+            'ministerio': forms.Select(attrs={'class': 'form-control'}),
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Ministério Infantil'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Descreva a função desse departamento'}),
+            'imagem': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'lider': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Responsável pelo departamento'}),
+            'ordem': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0'}),
+            'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }

@@ -7,12 +7,13 @@
 
 {% block conteudo %}
 <main>
-    <section 
+    <section
         class="hero-section min-hero"
         style="background-image: url('{{ ministerio.imagem_capa.url }}');"
     >
         <div class="hero-overlay"></div>
         <div class="container hero-content fade-in">
+            <span class="hero-kicker">Conheça esta congregação</span>
             <h2>{{ ministerio.nome }}</h2>
 
             {% if ministerio.subtitulo %}
@@ -23,55 +24,173 @@
         </div>
     </section>
 
-    <section class="section sobre-section">
-        <div class="container asymetric-layout fade-in">
-            <div class="social-text">
-                <h2>Sobre nossa congregação</h2>
-                <p>{{ ministerio.descricao }}</p>
-
-                <div class="info-box">
-                    <h3><i class="fas fa-map-marker-alt"></i> Local</h3>
-                    <p>{{ ministerio.local }}</p>
-                </div>
-
-                <div class="info-box">
-                    <h3><i class="fas fa-user-tie"></i> Liderança Local</h3>
-                    <p>
-                        {{ ministerio.lider }}
-                        {% if ministerio.cargo_lider %}
-                            - {{ ministerio.cargo_lider }}
-                        {% endif %}
+    <section class="section ministerio-detalhe-section">
+        <div class="container">
+            <div class="ministerio-topo-grid fade-in">
+                <div class="ministerio-topo-texto">
+                    <span class="section-mini-title">Sobre a igreja</span>
+                    <h2>Uma congregação com identidade própria</h2>
+                    <p class="ministerio-descricao-principal">
+                        {{ ministerio.descricao }}
                     </p>
+
+                    <div class="ministerio-infos-grid">
+                        <div class="info-box">
+                            <h3><i class="fas fa-map-marker-alt"></i> Local</h3>
+                            <p>{{ ministerio.local }}</p>
+                        </div>
+
+                        <div class="info-box">
+                            <h3><i class="fas fa-user-tie"></i> Liderança</h3>
+                            <p>
+                                {{ ministerio.lider }}
+                                {% if ministerio.cargo_lider %}
+                                    - {{ ministerio.cargo_lider }}
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        {% if ministerio.contato %}
+                        <div class="info-box">
+                            <h3><i class="fas fa-phone-alt"></i> Contato</h3>
+                            <p>{{ ministerio.contato }}</p>
+                        </div>
+                        {% endif %}
+
+                        {% if ministerio.versiculo %}
+                        <div class="info-box">
+                            <h3><i class="fas fa-book-bible"></i> Versículo</h3>
+                            <p>{{ ministerio.versiculo }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
 
-                {% if ministerio.dia_reuniao or ministerio.horario %}
-                    <div class="info-box">
-                        <h3><i class="fas fa-clock"></i> Reuniões</h3>
-                        <p>
-                            {% if ministerio.dia_reuniao %}{{ ministerio.dia_reuniao }}{% endif %}
-                            {% if ministerio.dia_reuniao and ministerio.horario %} às {% endif %}
-                            {% if ministerio.horario %}{{ ministerio.horario }}{% endif %}
-                        </p>
-                    </div>
-                {% endif %}
+                <div class="ministerio-topo-imagem">
+                    <img src="{{ ministerio.imagem_principal.url }}" alt="{{ ministerio.nome }}">
+                </div>
+            </div>
+        </div>
+    </section>
 
-                {% if ministerio.contato %}
-                    <div class="info-box">
-                        <h3><i class="fas fa-phone-alt"></i> Contato</h3>
-                        <p>{{ ministerio.contato }}</p>
-                    </div>
-                {% endif %}
-
-                {% if ministerio.versiculo %}
-                    <div class="info-box">
-                        <h3><i class="fas fa-book-bible"></i> Versículo</h3>
-                        <p>{{ ministerio.versiculo }}</p>
-                    </div>
-                {% endif %}
+    <section class="section bg-light fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2>Horários e cultos</h2>
+                <p>
+                    Aqui você pode apresentar todos os dias, horários e tipos de reunião
+                    da congregação de forma organizada.
+                </p>
             </div>
 
-            <div class="social-image">
-                <img src="{{ ministerio.imagem_principal.url }}" alt="{{ ministerio.nome }}">
+            <div class="cultos-grid">
+                {% if ministerio.cultos.all %}
+                    {% for culto in ministerio.cultos.all %}
+                        <article class="culto-card">
+                            <div class="culto-dia">
+                                <i class="fas fa-calendar-day"></i>
+                                <span>{{ culto.dia }}</span>
+                            </div>
+
+                            <h3>{{ culto.horario }}</h3>
+
+                            {% if culto.descricao %}
+                                <p>{{ culto.descricao }}</p>
+                            {% else %}
+                                <p>Reunião da igreja.</p>
+                            {% endif %}
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <article class="culto-card culto-card-vazio">
+                        <div class="culto-dia">
+                            <i class="fas fa-calendar-day"></i>
+                            <span>Exemplo</span>
+                        </div>
+                        <h3>Domingo - 18:00</h3>
+                        <p>Adicione os cultos no painel para mostrar todos os horários dinamicamente.</p>
+                    </article>
+
+                    <article class="culto-card culto-card-vazio">
+                        <div class="culto-dia">
+                            <i class="fas fa-calendar-day"></i>
+                            <span>Exemplo</span>
+                        </div>
+                        <h3>Domingo - 19:00</h3>
+                        <p>Oração, culto principal, ensino, jovens, infantil e o que mais precisar.</p>
+                    </article>
+
+                    <article class="culto-card culto-card-vazio">
+                        <div class="culto-dia">
+                            <i class="fas fa-calendar-day"></i>
+                            <span>Exemplo</span>
+                        </div>
+                        <h3>Quinta - 19:30</h3>
+                        <p>Essa área já fica pronta para receber vários horários por igreja.</p>
+                    </article>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <section class="section fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2>Departamentos desta congregação</h2>
+                <p>
+                    Cada igreja pode ter seus próprios departamentos, líderes, equipes e fotos.
+                </p>
+            </div>
+
+            <div class="departamentos-grid">
+                {% if ministerio.departamentos.all %}
+                    {% for departamento in ministerio.departamentos.all %}
+                        <article class="departamento-card">
+                            <div class="departamento-img-wrap">
+                                <img src="{{ departamento.imagem.url }}" alt="{{ departamento.nome }}">
+                            </div>
+
+                            <div class="departamento-card-content">
+                                <span class="departamento-badge">Departamento</span>
+                                <h3>{{ departamento.nome }}</h3>
+                                <p>{{ departamento.descricao }}</p>
+                            </div>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <article class="departamento-card departamento-card-vazio">
+                        <div class="departamento-img-wrap">
+                            <img src="{% static 'image/logo.png' %}" alt="Departamento">
+                        </div>
+                        <div class="departamento-card-content">
+                            <span class="departamento-badge">Exemplo</span>
+                            <h3>Ministério Infantil</h3>
+                            <p>Cadastre os departamentos no painel para mostrar as equipes e a importância de cada área da igreja.</p>
+                        </div>
+                    </article>
+
+                    <article class="departamento-card departamento-card-vazio">
+                        <div class="departamento-img-wrap">
+                            <img src="{% static 'image/logo.png' %}" alt="Departamento">
+                        </div>
+                        <div class="departamento-card-content">
+                            <span class="departamento-badge">Exemplo</span>
+                            <h3>Louvor</h3>
+                            <p>Você poderá adicionar foto, nome, descrição e a ligação com a congregação correta.</p>
+                        </div>
+                    </article>
+
+                    <article class="departamento-card departamento-card-vazio">
+                        <div class="departamento-img-wrap">
+                            <img src="{% static 'image/logo.png' %}" alt="Departamento">
+                        </div>
+                        <div class="departamento-card-content">
+                            <span class="departamento-badge">Exemplo</span>
+                            <h3>Mídia</h3>
+                            <p>Essa seção foi preparada para ficar dinâmica e mais completa do que a tela antiga.</p>
+                        </div>
+                    </article>
+                {% endif %}
             </div>
         </div>
     </section>

@@ -1,13 +1,13 @@
 {% extends 'painel/base_painel.html' %}
 
 {% block titulo %}Ministérios | Painel{% endblock %}
-{% block pagina_titulo %}CRUD de Ministérios{% endblock %}
-{% block pagina_subtitulo %}Cadastre, edite e remova as congregações do site.{% endblock %}
+{% block pagina_titulo %}Igrejas cadastradas{% endblock %}
+{% block pagina_subtitulo %}Gerencie todas as congregações do Ministério Redenção.{% endblock %}
 
 {% block topbar_actions %}
 <a href="{% url 'criar_ministerio' %}" class="btn btn-primary">
     <i class="fas fa-plus"></i>
-    Novo ministério
+    Nova igreja
 </a>
 {% endblock %}
 
@@ -15,7 +15,7 @@
 <div class="card">
     <div class="toolbar">
         <form method="get" class="search-form">
-            <input type="text" name="busca" value="{{ busca }}" placeholder="Buscar ministério pelo nome...">
+            <input type="text" name="busca" value="{{ busca }}" placeholder="Buscar igreja pelo nome...">
             <button type="submit" class="btn btn-light">
                 <i class="fas fa-search"></i>
                 Buscar
@@ -29,12 +29,12 @@
                 <thead>
                     <tr>
                         <th>Imagem</th>
-                        <th>Nome</th>
+                        <th>Igreja</th>
                         <th>Local</th>
-                        <th>Slug</th>
+                        <th>Responsável</th>
+                        <th>URL</th>
                         <th>Status</th>
                         <th>Destaque</th>
-                        <th>Ordem</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -52,10 +52,18 @@
                         </td>
                         <td>
                             <strong>{{ ministerio.nome }}</strong><br>
-                            <span style="color:#6b7280;font-size:0.9rem;">{{ ministerio.resumo|truncatechars:55 }}</span>
+                            <span style="color:#6b7280;font-size:0.9rem;">{{ ministerio.resumo|truncatechars:70 }}</span>
                         </td>
                         <td>{{ ministerio.local }}</td>
-                        <td>{{ ministerio.slug }}</td>
+                        <td>
+                            {{ ministerio.lider }}
+                            {% if ministerio.cargo_lider %}
+                                <br><span style="color:#6b7280;font-size:0.85rem;">{{ ministerio.cargo_lider }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="table-slug">{{ ministerio.slug }}</span>
+                        </td>
                         <td>
                             {% if ministerio.ativo %}
                                 <span class="badge badge-success">Ativo</span>
@@ -70,13 +78,13 @@
                                 <span class="badge badge-muted">Normal</span>
                             {% endif %}
                         </td>
-                        <td>{{ ministerio.ordem }}</td>
                         <td>
                             <div class="actions">
                                 <a href="{% url 'editar_ministerio' ministerio.pk %}" class="btn btn-sm btn-edit">
                                     <i class="fas fa-pen"></i>
                                     Editar
                                 </a>
+
                                 <a href="{% url 'excluir_ministerio' ministerio.pk %}" class="btn btn-sm btn-delete">
                                     <i class="fas fa-trash"></i>
                                     Excluir
@@ -91,8 +99,8 @@
     {% else %}
         <div class="empty-state">
             <i class="fas fa-church"></i>
-            <h3 style="margin-bottom: 10px; color:#111827;">Nenhum ministério encontrado</h3>
-            <p>Cadastre o primeiro ministério para começar a montar o site.</p>
+            <h3 style="margin-bottom: 10px; color:#111827;">Nenhuma igreja cadastrada</h3>
+            <p>Cadastre a primeira congregação para começar a montar o site.</p>
         </div>
     {% endif %}
 </div>

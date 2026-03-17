@@ -1,0 +1,119 @@
+{% extends 'painel/base_painel.html' %}
+
+{% block titulo %}Departamentos | Painel{% endblock %}
+{% block pagina_titulo %}Departamentos das igrejas{% endblock %}
+{% block pagina_subtitulo %}Gerencie louvor, infantil, mídia, jovens e qualquer outro departamento.{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'criar_departamento' %}" class="btn btn-primary">
+    <i class="fas fa-plus"></i>
+    Novo departamento
+</a>
+{% endblock %}
+
+{% block conteudo %}
+<div class="card">
+    <div class="toolbar" style="align-items: flex-end;">
+        <form method="get" class="search-form" style="max-width: 100%;">
+            <div style="display:flex; gap:12px; flex-wrap:wrap; width:100%;">
+                <input
+                    type="text"
+                    name="busca"
+                    value="{{ busca }}"
+                    placeholder="Buscar departamento..."
+                    style="min-width: 240px;"
+                >
+
+                <select name="ministerio" class="form-control" style="max-width: 320px;">
+                    <option value="">Todas as igrejas</option>
+                    {% for ministerio in ministerios %}
+                        <option value="{{ ministerio.id }}" {% if ministerio_id == ministerio.id|stringformat:'s' %}selected{% endif %}>
+                            {{ ministerio.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="btn btn-light">
+                    <i class="fas fa-search"></i>
+                    Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if departamentos %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Imagem</th>
+                        <th>Departamento</th>
+                        <th>Igreja</th>
+                        <th>Líder</th>
+                        <th>Ordem</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for departamento in departamentos %}
+                    <tr>
+                        <td>
+                            {% if departamento.imagem %}
+                                <img src="{{ departamento.imagem.url }}" alt="{{ departamento.nome }}" class="thumb">
+                            {% else %}
+                                <div class="thumb" style="display:flex;align-items:center;justify-content:center;background:#f3f4f6;color:#9ca3af;">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ departamento.nome }}</strong><br>
+                            <span style="color:#6b7280;font-size:0.9rem;">{{ departamento.descricao|truncatechars:80 }}</span>
+                        </td>
+                        <td>
+                            <strong>{{ departamento.ministerio.nome }}</strong><br>
+                            <span style="color:#6b7280;font-size:0.86rem;">{{ departamento.ministerio.local }}</span>
+                        </td>
+                        <td>
+                            {% if departamento.lider %}
+                                {{ departamento.lider }}
+                            {% else %}
+                                <span style="color:#94a3b8;">Não informado</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ departamento.ordem }}</td>
+                        <td>
+                            {% if departamento.ativo %}
+                                <span class="badge badge-success">Ativo</span>
+                            {% else %}
+                                <span class="badge badge-muted">Inativo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <a href="{% url 'editar_departamento' departamento.pk %}" class="btn btn-sm btn-edit">
+                                    <i class="fas fa-pen"></i>
+                                    Editar
+                                </a>
+
+                                <a href="{% url 'excluir_departamento' departamento.pk %}" class="btn btn-sm btn-delete">
+                                    <i class="fas fa-trash"></i>
+                                    Excluir
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-users"></i>
+            <h3 style="margin-bottom: 10px; color:#111827;">Nenhum departamento encontrado</h3>
+            <p>Cadastre os departamentos para enriquecer a página de cada igreja.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

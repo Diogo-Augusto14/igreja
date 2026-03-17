@@ -2,35 +2,67 @@
 
 {% block titulo %}Dashboard | Painel{% endblock %}
 {% block pagina_titulo %}Dashboard{% endblock %}
-{% block pagina_subtitulo %}Visão geral do painel administrativo do site.{% endblock %}
+{% block pagina_subtitulo %}Resumo geral do painel administrativo do Ministério Redenção.{% endblock %}
 
 {% block conteudo %}
 <div class="stats-grid">
     <div class="stat-card">
-        <span>Total de ministérios</span>
+        <span>Total de igrejas</span>
         <h3>{{ total_ministerios }}</h3>
-        <p>Quantidade total cadastrada no sistema.</p>
+        <p>Quantidade total de congregações cadastradas.</p>
     </div>
 
     <div class="stat-card">
-        <span>Ministérios ativos</span>
+        <span>Igrejas ativas</span>
         <h3>{{ ministerios_ativos }}</h3>
-        <p>Congregações que estão visíveis no site.</p>
+        <p>Congregações atualmente visíveis no site.</p>
     </div>
 
     <div class="stat-card">
-        <span>Ministérios em destaque</span>
+        <span>Igrejas em destaque</span>
         <h3>{{ ministerios_destaque }}</h3>
-        <p>Itens marcados como destaque.</p>
+        <p>Itens marcados para ganhar mais evidência.</p>
     </div>
 </div>
 
-<div class="card">
-    <h3 style="margin-bottom: 12px;">Bem-vindo ao painel</h3>
-    <p style="color: #6b7280; line-height: 1.7;">
-        Esse painel já serve como base para os próximos CRUDs do projeto.
-        Depois você pode repetir essa mesma estrutura para eventos, líderes, banners, galeria,
-        agenda e qualquer outra área administrativa do site.
-    </p>
+<div class="dashboard-grid">
+    <div class="card">
+        <h3 class="dashboard-title">Próximos módulos do painel</h3>
+        <p class="dashboard-text">
+            A base do painel já está pronta para crescer. O próximo passo é ligar os módulos
+            dinâmicos de cultos, departamentos, eventos e galeria para cada igreja.
+        </p>
+
+        <div class="dashboard-check-list">
+            <div class="dashboard-check-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Cadastro de igrejas</span>
+            </div>
+            <div class="dashboard-check-item">
+                <i class="fas fa-clock"></i>
+                <span>Horários e cultos por igreja</span>
+            </div>
+            <div class="dashboard-check-item">
+                <i class="fas fa-users"></i>
+                <span>Departamentos por congregação</span>
+            </div>
+            <div class="dashboard-check-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Eventos futuros</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="dashboard-title">Visão do sistema</h3>
+        <p class="dashboard-text">
+            O objetivo desse painel é deixar cada igreja com sua própria página detalhada,
+            com cultos, departamentos, fotos, liderança e todas as informações organizadas.
+        </p>
+
+        <div class="painel-alert painel-alert-info" style="margin-top: 18px;">
+            Esse painel já está servindo como base visual para os próximos CRUDs.
+        </div>
+    </div>
 </div>
 {% endblock %}

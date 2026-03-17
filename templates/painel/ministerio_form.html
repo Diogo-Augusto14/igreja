@@ -13,18 +13,23 @@
 
 {% block conteudo %}
 <div class="card">
+    <div class="painel-section-title">
+        <h3>Informações principais da congregação</h3>
+        <p>Cadastre os dados principais da igreja que será exibida no site público.</p>
+    </div>
+
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         <div class="form-grid">
             <div class="form-group">
-                <label for="{{ form.nome.id_for_label }}">Nome</label>
+                <label for="{{ form.nome.id_for_label }}">Nome da igreja</label>
                 {{ form.nome }}
                 {{ form.nome.errors }}
             </div>
 
             <div class="form-group">
-                <label for="{{ form.slug.id_for_label }}">Slug</label>
+                <label for="{{ form.slug.id_for_label }}">Slug da URL</label>
                 {{ form.slug }}
                 {{ form.slug.errors }}
             </div>
@@ -36,31 +41,38 @@
             </div>
 
             <div class="form-group full">
-                <label for="{{ form.resumo.id_for_label }}">Resumo</label>
+                <label for="{{ form.resumo.id_for_label }}">Resumo para o card</label>
                 {{ form.resumo }}
                 {{ form.resumo.errors }}
             </div>
 
             <div class="form-group full">
-                <label for="{{ form.descricao.id_for_label }}">Descrição</label>
+                <label for="{{ form.descricao.id_for_label }}">Descrição completa</label>
                 {{ form.descricao }}
                 {{ form.descricao.errors }}
             </div>
+        </div>
 
+        <div class="painel-section-title form-block-space">
+            <h3>Identidade e liderança</h3>
+            <p>Essas informações ajudam a apresentar melhor a igreja para quem visitar o site.</p>
+        </div>
+
+        <div class="form-grid">
             <div class="form-group">
-                <label for="{{ form.lider.id_for_label }}">Líder</label>
+                <label for="{{ form.lider.id_for_label }}">Responsável / líder</label>
                 {{ form.lider }}
                 {{ form.lider.errors }}
             </div>
 
             <div class="form-group">
-                <label for="{{ form.cargo_lider.id_for_label }}">Cargo do líder</label>
+                <label for="{{ form.cargo_lider.id_for_label }}">Cargo do responsável</label>
                 {{ form.cargo_lider }}
                 {{ form.cargo_lider.errors }}
             </div>
 
             <div class="form-group">
-                <label for="{{ form.local.id_for_label }}">Local</label>
+                <label for="{{ form.local.id_for_label }}">Local / endereço / bairro</label>
                 {{ form.local }}
                 {{ form.local.errors }}
             </div>
@@ -71,24 +83,19 @@
                 {{ form.contato.errors }}
             </div>
 
-            <div class="form-group">
-                <label for="{{ form.dia_reuniao.id_for_label }}">Dia da reunião</label>
-                {{ form.dia_reuniao }}
-                {{ form.dia_reuniao.errors }}
-            </div>
-
-            <div class="form-group">
-                <label for="{{ form.horario.id_for_label }}">Horário</label>
-                {{ form.horario }}
-                {{ form.horario.errors }}
-            </div>
-
             <div class="form-group full">
                 <label for="{{ form.versiculo.id_for_label }}">Versículo</label>
                 {{ form.versiculo }}
                 {{ form.versiculo.errors }}
             </div>
+        </div>
 
+        <div class="painel-section-title form-block-space">
+            <h3>Imagens da igreja</h3>
+            <p>Use imagens de boa qualidade para valorizar a apresentação da congregação.</p>
+        </div>
+
+        <div class="form-grid">
             <div class="form-group">
                 <label for="{{ form.imagem_capa.id_for_label }}">Imagem de capa</label>
                 {{ form.imagem_capa }}
@@ -112,7 +119,14 @@
                     </div>
                 {% endif %}
             </div>
+        </div>
 
+        <div class="painel-section-title form-block-space">
+            <h3>Organização do site</h3>
+            <p>Essas opções controlam visibilidade e ordem de exibição.</p>
+        </div>
+
+        <div class="form-grid">
             <div class="form-group">
                 <label for="{{ form.ordem.id_for_label }}">Ordem</label>
                 {{ form.ordem }}
@@ -135,6 +149,11 @@
                 {{ form.ativo.errors }}
                 {{ form.destaque.errors }}
             </div>
+        </div>
+
+        <div class="painel-alert painel-alert-info">
+            <strong>Próximo passo:</strong>
+            depois vamos ligar aqui os blocos de cultos e departamentos para cada igreja ficar completa e dinâmica.
         </div>
 
         <div style="margin-top: 28px; display:flex; gap:12px; flex-wrap:wrap;">

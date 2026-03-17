@@ -11,8 +11,6 @@ class Ministerio(models.Model):
     lider = models.CharField(max_length=120)
     cargo_lider = models.CharField(max_length=120, blank=True)
     local = models.CharField(max_length=200)
-    dia_reuniao = models.CharField(max_length=100, blank=True)
-    horario = models.CharField(max_length=100, blank=True)
     contato = models.CharField(max_length=50, blank=True)
     versiculo = models.CharField(max_length=255, blank=True)
     imagem_capa = models.ImageField(upload_to='ministerios/capas/')
@@ -44,3 +42,48 @@ class Ministerio(models.Model):
             self.slug = slug
 
         super().save(*args, **kwargs)
+
+
+class Culto(models.Model):
+    ministerio = models.ForeignKey(
+        Ministerio,
+        on_delete=models.CASCADE,
+        related_name='cultos'
+    )
+    dia = models.CharField(max_length=50)
+    horario = models.CharField(max_length=50)
+    descricao = models.CharField(max_length=200, blank=True)
+    ordem = models.PositiveIntegerField(default=0)
+    ativo = models.BooleanField(default=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['ordem', 'id']
+        verbose_name = 'Culto'
+        verbose_name_plural = 'Cultos'
+
+    def __str__(self):
+        return f'{self.ministerio.nome} - {self.dia} - {self.horario}'
+
+
+class Departamento(models.Model):
+    ministerio = models.ForeignKey(
+        Ministerio,
+        on_delete=models.CASCADE,
+        related_name='departamentos'
+    )
+    nome = models.CharField(max_length=150)
+    descricao = models.TextField()
+    imagem = models.ImageField(upload_to='departamentos/')
+    lider = models.CharField(max_length=120, blank=True)
+    ordem = models.PositiveIntegerField(default=0)
+    ativo = models.BooleanField(default=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['ordem', 'nome']
+        verbose_name = 'Departamento'
+        verbose_name_plural = 'Departamentos'
+
+    def __str__(self):
+        return f'{self.ministerio.nome} - {self.nome}'
