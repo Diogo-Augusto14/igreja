@@ -1,138 +1,105 @@
-{% extends 'base.html' %} {% load static %} {% block titulo %}<title>
-  Ministério Redenção | Nossa História</title
->{% endblock %} {% block conteudo %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+<title>Ministério Redenção | Nossa História</title>
+{% endblock %}
+
+{% block conteudo %}
 <main>
+
+  <!-- HERO -->
   <section id="hero" class="hero-section">
     <div class="hero-overlay"></div>
     <div class="container hero-content fade-in">
       <h2>Lugar de recomeços e esperança</h2>
       <p>
-        Uma família de fé, conectada pelo propósito de amar a Deus e servir às
-        pessoas. Descubra o seu lugar aqui.
+        Uma família de fé, conectada pelo propósito de amar a Deus e servir às pessoas.
+        Descubra o seu lugar aqui.
       </p>
       <div class="hero-actions">
         <a href="#sobre" class="btn-primary">Conheça Nossa História</a>
       </div>
     </div>
   </section>
+
+  <!-- SOBRE (texto esquerda / imagem direita) -->
   <section id="sobre" class="section sobre-section bg-light">
     <div class="container asymetric-layout fade-in">
-      <div class="social-image">
-        <img
-          src="{% static 'image/pessoas/ap e pastora.jpg' %}"
-          alt="Nossa igreja reunida"
-        />
-      </div>
       <div class="social-text">
-        <h2>Nossa  Missão</h2>
+        <h2 class="center_text">Nossa Missão</h2>
         <p>
-          O Ministério Redenção nasceu com um chamado claro: Trazer Cristo pra um lugar sem esperança,um lugar onde a tristeza e a pobreza reinavam.E Deus foi fiel e bom para nós,nos proporcionando experiencias sobrenaturais,podendo ajudar não só com uma cesta basica ou um abraço,mais levando a paz em pessoa,Cristo.
+          O Ministério Redenção nasceu com um chamado claro: Trazer Cristo pra um lugar sem esperança,
+          um lugar onde a tristeza e a pobreza reinavam...
         </p>
         <p>
-          Nossa visão é fundamentada no amor ao proximo,é levar o amor de Cristo ao pobre de espirito e a ajuda aos nossos irmãos em Cristo Jesus,nosso intuito como intituição não é em ser só mais uma igreja,mais sim ser uma igreja avivada,Cheia do Espirito Santo e a nossa vocação é o céu,nosso objetivo é Cristo e a nossa meta e viver na eternidade em comunhão!
+          Nossa visão é fundamentada no amor ao próximo,é levar o amor de Cristo ao pobre de espírito e a ajuda aos nossos irmãos em Cristo Jesus,nosso intuitivo como intuição não é em ser só mais uma igreja,mais sim ser uma igreja avivada,Cheia do Espírito Santo e a nossa vocação é o céu,nosso objetivo é Cristo e a nossa meta e viver na evolução em comunhão! 
         </p>
-        <h2>Quem Somos</h2>
+
+        <h2 class="center_text">Quem Somos</h2>
         <p>
-           O Ministério Redenção começou como um grupo pequeno, uma simples “igrejinha” em um bairro totalmente desvalorizado e abandonado pela cidade, com uma fama muito ruim, sem saneamento básico, sem postos de saúde, com uma escola sem segurança e sem um ensino minimamente decente. <br>
-
-Enfim, era um lugar onde não havia expectativa de qualidade de vida. As crianças não tinham sonhos a longo prazo; muitas apenas queriam uma bola para brincar ou que a mãe tivesse um pai ou padrasto presente que trouxesse sustento para casa. Era um lugar difícil de viver... <br>
-
-Deus, através do nosso pastor Marcelo (Apóstolo Presidente), começou Sua obra ali. Mesmo com tantas dificuldades, na época a igreja se chamava Batista e tinha pouquíssimos membros. Os cultos geralmente tinham entre 8 e 12 pessoas, no máximo. <br>
-
-Era difícil a locomoção até a igreja, pois as ruas não tinham asfalto ou sequer uma estrada decente. Marcelo sempre diz que chegava à igreja com os pés cheios de poeira ou de barro, por causa das condições do <br>
+          O Ministério Redenção começou como um grupo pequeno, uma simples “igrejinha” em um bairro totalmente desvalorizado e abandonado pela cidade, com uma fama muito ruim, sem saneamento básico, sem postos de saúde, com uma escola sem segurança e sem um ensino minimamente decente. <br> Enfim, era um lugar onde não havia expectativa de qualidade de vida. As crianças não tinham sonhos a longo prazo; apenas queria uma bola para brincar ou que a mãe tivesse um pai ou padrasto presente que trouxesse sustento para casa. Era um lugar difícil de viver... <br> Deus, através do nosso pastor Marcelo (Apóstolo Presidente), começou Sua obra ali. Mesmo com tantas dificuldades, na época a igreja se chamava Batista e tinha poucos membros. Os cultos geralmente eram entre 8 e 12 pessoas, no máximo.<br> Era difícil a locomoção até a igreja, pois as ruas não tinham asfalto ou sequer uma estrada decente. Marcelo sempre diz que chegava à igreja com os pés cheios de poeira ou de barro, por causa das condições do bairro <br>
         </p>
-        <a href="#ministerios" class="btn-text"
-          >Conheça nossa liderança <i class="fas fa-arrow-right"></i
-        ></a>
+      </div>
+      <div class="social-image">
+        <img src="{% static 'image/pessoas/apostolo.jpg' %}" alt="Nossa igreja reunida" />
       </div>
     </div>
   </section>
 
+  <!-- MINISTÉRIOS (imagem esquerda / texto direita) -->
+  <section id="ministerios" class="section ministerios-section bg-light">
+    <div class="container asymetric-layout reverse-layout fade-in">
+      <div class="social-image">
+        <img src="{% static 'image/pessoas/ministerios.jpg' %}" alt="Foto dos Ministérios" />
+      </div>
+      <div class="social-text">
+        <h2 class="center_text">Nossos Ministérios</h2>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt totam alias dicta amet sunt distinctio dignissimos molestias officiis delectus...
+        </p>
+        <a href="#ministerios" class="btn-text">
+          <button id="btn_">Conheça os Nossos Ministérios <i class="fas fa-arrow-right"></i></button>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIDERANÇA (texto cima / cards abaixo) -->
   <section id="lideranca" class="section lideranca-section">
     <div class="container fade-in">
       <div class="section-header">
         <h2>Nossos Pastores</h2>
-        <p>
-          Homens e mulheres dedicados a cuidar, ensinar e guiar nossa
-          comunidade.
-        </p>
+        <p>Homens e mulheres dedicados a cuidar, ensinar e guiar nossa comunidade.</p>
       </div>
-
       <div class="lideranca-grid">
-        <article class="lider-card">
-          <div class="lider-img-wrapper">
-            <img
-              src="https://via.placeholder.com/400x400/2C5282/FFFFFF?text=Pr+Presidente"
-              alt="Pastor Presidente"
-            />
-          </div>
-          <h3>Pr. Marcos Silva</h3>
-          <span>Pastor Sênior</span>
-          <p>
-            Com mais de 20 anos de ministério, Pr. Marcos lidera a Redenção com
-            uma visão de amor, graça e ensino profundo da Palavra.
-          </p>
-          <div class="lider-social">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-          </div>
-        </article>
-
-        <article class="lider-card">
-          <div class="lider-img-wrapper">
-            <img
-              src="https://via.placeholder.com/400x400/2C5282/FFFFFF?text=Pra+Lider"
-              alt="Pastora Liderança"
-            />
-          </div>
-          <h3>Pra. Helena Silva</h3>
-          <span>Pastora de Famílias</span>
-          <p>
-            Responsável pelo aconselhamento e ministério de mulheres, trazendo
-            acolhimento e sabedoria para as famílias da igreja.
-          </p>
-          <div class="lider-social">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-          </div>
-        </article>
+        <!-- Cards dos pastores -->
+        ...
       </div>
     </div>
   </section>
 
+  <!-- AÇÃO SOCIAL (texto esquerda / imagem direita) -->
   <section id="social" class="section social-section bg-light">
     <div class="container asymetric-layout fade-in">
       <div class="social-text">
         <h2>Amor em Ação na Comunidade</h2>
         <p>
-          Acreditamos que o evangelho vai muito além das quatro paredes. Nosso
-          braço social atua ativamente na transformação da nossa cidade,
-          oferecendo suporte físico, emocional e educacional para famílias em
-          situação de vulnerabilidade.
+          Acreditamos que o evangelho vai muito além das quatro paredes...
         </p>
         <ul class="social-list">
-          <li>
-            <i class="fas fa-check-circle"></i> Distribuição mensal de alimentos
-            e roupas.
-          </li>
-          <li>
-            <i class="fas fa-check-circle"></i> Aulas de reforço e cursos
-            profissionalizantes.
-          </li>
-          <li>
-            <i class="fas fa-check-circle"></i> Atendimento psicológico e
-            assistência social.
-          </li>
+          <li><i class="fas fa-check-circle"></i> Distribuição mensal de alimentos e roupas.</li>
+          <li><i class="fas fa-check-circle"></i> Aulas de reforço e cursos profissionalizantes.</li>
+          <li><i class="fas fa-check-circle"></i> Atendimento psicológico e assistência social.</li>
         </ul>
       </div>
       <div class="social-image">
-        <img
-          src="https://via.placeholder.com/800x900/E2E8F0/2C5282?text=Acao+Social"
-          alt="Trabalho voluntário na comunidade"
-        />
+        <img src="https://via.placeholder.com/800x900/E2E8F0/2C5282?text=Acao+Social" alt="Trabalho voluntário na comunidade" />
       </div>
     </div>
   </section>
 
+  <!-- GALERIA (texto cima / imagens abaixo) -->
   <section id="galeria" class="section galeria-section">
     <div class="container fade-in">
       <div class="section-header">
@@ -140,24 +107,10 @@ Era difícil a locomoção até a igreja, pois as ruas não tinham asfalto ou se
         <p>Um vislumbre dos nossos momentos de adoração, comunhão e alegria.</p>
       </div>
       <div class="gallery-grid">
-        <img
-          src="https://via.placeholder.com/500x500/2C5282/FFFFFF?text=Adoracao"
-          alt="Momento do culto"
-        />
-        <img
-          src="https://via.placeholder.com/500x500/1A365D/FFFFFF?text=Comunhao"
-          alt="Momento de comunhão"
-        />
-        <img
-          src="https://via.placeholder.com/500x500/E2E8F0/2C5282?text=Batismo"
-          alt="Dia de batismo"
-        />
-        <img
-          src="https://via.placeholder.com/500x500/2C5282/FFFFFF?text=Criancas"
-          alt="Ministério Infantil"
-        />
+        ...
       </div>
     </div>
   </section>
+
 </main>
 {% endblock %}
