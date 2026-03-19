@@ -33,6 +33,7 @@
 
     --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     --container: 1180px;
+    --navbar-height: 76px;
 }
 
 /* =========================
@@ -53,7 +54,7 @@ body {
     color: var(--text-body);
     font-family: var(--font-main);
     font-size: 15px;
-    line-height: 1.55;
+    line-height: 1.6;
     overflow-x: hidden;
 }
 
@@ -92,7 +93,7 @@ button {
     width: 100%;
     max-width: var(--container);
     margin: 0 auto;
-    padding: 0 22px;
+    padding: 0 20px;
 }
 
 .section {
@@ -132,6 +133,14 @@ button {
     font-size: 0.96rem;
     max-width: 680px;
     margin: 0 auto;
+}
+
+.center_text {
+    color: var(--primary-dark);
+    font-size: clamp(1.4rem, 2.6vw, 2rem);
+    line-height: 1.2;
+    margin-bottom: 14px;
+    font-weight: 800;
 }
 
 /* =========================
@@ -220,6 +229,7 @@ button {
 .navbar {
     position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
     z-index: 1000;
     padding: 12px 0;
@@ -234,8 +244,13 @@ button {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
+    gap: 16px;
     position: relative;
+    min-height: 52px;
+}
+
+.logo {
+    flex-shrink: 0;
 }
 
 .logo h1 {
@@ -282,13 +297,14 @@ button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     color: var(--primary-dark);
     background: var(--bg-light);
     box-shadow: var(--shadow-xs);
     font-size: 1.2rem;
+    flex-shrink: 0;
 }
 
 .mobile-menu-btn:hover {
@@ -353,11 +369,13 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-top: 76px;
+    padding-top: calc(var(--navbar-height) + 24px);
+    padding-bottom: 32px;
     background-image: url("../image/logo.png");
     background-size: contain;
-    background-position: 53% center;
+    background-position: center;
     background-repeat: no-repeat;
+    overflow: hidden;
 }
 
 .hero-overlay {
@@ -395,6 +413,7 @@ button {
     margin-bottom: 14px;
     line-height: 1.08;
     letter-spacing: -0.03em;
+    word-break: break-word;
 }
 
 .hero-content p {
@@ -456,7 +475,7 @@ button {
 
 .social-list li {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     color: var(--text-body);
     font-weight: 500;
@@ -465,6 +484,7 @@ button {
 
 .social-list i {
     color: var(--primary-color);
+    margin-top: 3px;
 }
 
 /* =========================
@@ -598,7 +618,7 @@ button {
    DETALHE MINISTÉRIO
 ========================= */
 .min-hero {
-    min-height: 70vh;
+    min-height: 62vh;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -610,9 +630,13 @@ button {
 
 .ministerio-topo-grid {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
     gap: 24px;
     align-items: center;
+}
+
+.ministerio-topo-texto {
+    min-width: 0;
 }
 
 .ministerio-topo-texto h2 {
@@ -628,11 +652,18 @@ button {
     color: var(--text-muted);
     line-height: 1.75;
     margin-bottom: 18px;
+    word-break: break-word;
+}
+
+.ministerio-topo-imagem {
+    width: 100%;
 }
 
 .ministerio-topo-imagem img {
     width: 100%;
+    height: 100%;
     min-height: 340px;
+    max-height: 420px;
     object-fit: cover;
     border-radius: 22px;
     box-shadow: var(--shadow-md);
@@ -640,7 +671,7 @@ button {
 
 .ministerio-infos-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
 }
 
@@ -650,6 +681,7 @@ button {
     border-radius: var(--radius-md);
     border: 1px solid var(--border-soft);
     box-shadow: var(--shadow-xs);
+    min-width: 0;
 }
 
 .info-box h3 {
@@ -666,6 +698,7 @@ button {
     color: var(--text-body);
     margin: 0;
     font-size: 0.92rem;
+    word-break: break-word;
 }
 
 /* =========================
@@ -678,29 +711,42 @@ button {
 
 .casal-card {
     width: 100%;
-    max-width: 820px;
+    max-width: 900px;
     background: var(--white);
     border: 1px solid var(--border-soft);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-soft);
     display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 18px;
-    padding: 18px;
+    grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+    gap: 22px;
+    padding: 22px;
     align-items: center;
+    overflow: hidden;
+}
+
+.casal-card-avatar {
+    width: 100%;
+    min-width: 0;
 }
 
 .casal-card-avatar img {
     width: 100%;
-    height: 200px;
+    height: 100%;
+    min-height: 240px;
+    max-height: 320px;
     object-fit: cover;
     border-radius: 18px;
+    background: var(--bg-soft);
+}
+
+.casal-card-content {
+    min-width: 0;
 }
 
 .casal-badge {
     display: inline-block;
-    margin-bottom: 10px;
-    padding: 7px 11px;
+    margin-bottom: 12px;
+    padding: 8px 12px;
     border-radius: 999px;
     background: var(--bg-accent);
     color: var(--primary-dark);
@@ -710,15 +756,17 @@ button {
 
 .casal-card-content h3 {
     color: var(--primary-dark);
-    font-size: 1.28rem;
+    font-size: clamp(1.35rem, 2.2vw, 2rem);
     line-height: 1.2;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-weight: 800;
+    word-break: break-word;
 }
 
 .casal-card-content p {
     color: var(--text-muted);
-    font-size: 0.92rem;
+    font-size: 0.98rem;
+    line-height: 1.7;
 }
 
 /* =========================
@@ -726,7 +774,7 @@ button {
 ========================= */
 .cultos-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
 }
 
@@ -779,7 +827,7 @@ button {
 ========================= */
 .departamentos-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
 }
 
@@ -870,6 +918,10 @@ button {
     object-fit: cover;
 }
 
+.departamento-lideranca-texto {
+    min-width: 0;
+}
+
 .departamento-lideranca-texto small {
     display: block;
     color: var(--text-muted);
@@ -881,6 +933,7 @@ button {
     color: var(--primary-dark);
     font-size: 0.88rem;
     line-height: 1.3;
+    word-break: break-word;
 }
 
 /* =========================
@@ -895,7 +948,7 @@ button {
 
 .evento-publico-card {
     display: grid;
-    grid-template-columns: 90px 1fr 180px;
+    grid-template-columns: 90px minmax(0, 1fr) 180px;
     gap: 14px;
     align-items: stretch;
     background: #fff;
@@ -933,6 +986,7 @@ button {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    min-width: 0;
 }
 
 .evento-publico-topo {
@@ -949,12 +1003,14 @@ button {
     font-size: 1.02rem;
     font-weight: 800;
     line-height: 1.2;
+    word-break: break-word;
 }
 
 .evento-publico-conteudo p {
     color: var(--text-muted);
     margin-bottom: 10px;
     font-size: 0.92rem;
+    word-break: break-word;
 }
 
 .evento-publico-meta {
@@ -1043,6 +1099,7 @@ button {
     padding: 18px;
     box-shadow: var(--shadow-soft);
     border: 1px solid var(--border-soft);
+    overflow-x: auto;
 }
 
 .calendario-header {
@@ -1097,7 +1154,7 @@ button {
 
 .calendario-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(42px, 1fr));
     gap: 6px;
     margin-bottom: 6px;
 }
@@ -1149,6 +1206,81 @@ button {
 }
 
 /* =========================
+   LOGIN
+========================= */
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, var(--bg-light), var(--bg-main));
+    padding: 20px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--white);
+    border: 1px solid var(--border-soft);
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    padding: 28px;
+}
+
+.login-card h2 {
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+    font-size: 1.6rem;
+    font-weight: 800;
+}
+
+.login-card p {
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: var(--primary-dark);
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    outline: none;
+    background: var(--white);
+}
+
+.form-group input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.12);
+}
+
+.errorlist {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+
+/* =========================
    FOOTER
 ========================= */
 .footer {
@@ -1180,6 +1312,7 @@ button {
 .social-icons {
     display: flex;
     gap: 12px;
+    flex-wrap: wrap;
 }
 
 .social-icons a {
@@ -1224,7 +1357,7 @@ button {
     font-size: 0.9rem;
     margin-bottom: 12px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
 }
 
@@ -1255,7 +1388,7 @@ button {
 ========================= */
 @media (min-width: 600px) {
     .ministerios-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
@@ -1289,7 +1422,7 @@ button {
 
 @media (min-width: 992px) {
     .ministerios-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
 
@@ -1297,15 +1430,27 @@ button {
     .ministerio-topo-grid,
     .cultos-grid,
     .departamentos-grid,
-    .ministerio-infos-grid,
     .asymetric-layout,
     .reverse-layout {
         grid-template-columns: 1fr;
     }
 
+    .ministerio-infos-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .reverse-layout .social-image,
     .reverse-layout .social-text {
         order: initial;
+    }
+
+    .evento-publico-card {
+        grid-template-columns: 90px minmax(0, 1fr);
+    }
+
+    .evento-publico-imagem {
+        grid-column: 1 / -1;
+        min-height: 220px;
     }
 }
 
@@ -1315,7 +1460,7 @@ button {
     }
 
     .min-hero {
-        min-height: 400px;
+        min-height: 420px;
     }
 
     .social-image img,
@@ -1323,9 +1468,23 @@ button {
         min-height: 300px;
         height: 300px;
     }
+
+    .casal-card {
+        grid-template-columns: 1fr;
+        max-width: 680px;
+    }
+
+    .casal-card-avatar img {
+        min-height: 260px;
+        max-height: 340px;
+    }
 }
 
 @media (max-width: 767px) {
+    :root {
+        --navbar-height: 72px;
+    }
+
     body {
         font-size: 14px;
     }
@@ -1334,11 +1493,32 @@ button {
         padding: 56px 0;
     }
 
+    .container {
+        padding: 0 16px;
+    }
+
+    .navbar {
+        padding: 10px 0;
+    }
+
+    .nav-container {
+        gap: 10px;
+    }
+
+    .logo h1 {
+        font-size: 1.08rem;
+    }
+
     .hero-section {
         min-height: 66vh;
-        padding-top: 68px;
+        padding-top: calc(var(--navbar-height) + 12px);
+        padding-bottom: 24px;
         background-size: cover;
         background-position: center;
+    }
+
+    .hero-content {
+        padding: 0 4px;
     }
 
     .hero-content h2 {
@@ -1349,13 +1529,17 @@ button {
         font-size: 0.95rem;
     }
 
+    .section-header {
+        margin-bottom: 28px;
+    }
+
     .section-header h2 {
         font-size: 1.7rem;
     }
 
     .ministerio-card img,
     .departamento-img-wrap {
-        height: 170px;
+        height: 180px;
     }
 
     .ministerio-card-content,
@@ -1366,12 +1550,35 @@ button {
         padding: 16px;
     }
 
-    .casal-card {
+    .ministerio-infos-grid {
         grid-template-columns: 1fr;
     }
 
+    .ministerio-topo-imagem img {
+        min-height: 240px;
+        height: 240px;
+    }
+
+    .casal-card {
+        padding: 16px;
+        gap: 16px;
+        border-radius: 20px;
+    }
+
     .casal-card-avatar img {
-        height: 220px;
+        width: 100%;
+        height: 240px;
+        min-height: unset;
+        max-height: unset;
+        object-fit: cover;
+    }
+
+    .casal-card-content h3 {
+        font-size: 1.8rem;
+    }
+
+    .casal-card-content p {
+        font-size: 0.95rem;
     }
 
     .evento-publico-card {
@@ -1382,6 +1589,7 @@ button {
         flex-direction: row;
         gap: 8px;
         justify-content: center;
+        padding: 12px;
     }
 
     .evento-publico-data .mes {
@@ -1393,21 +1601,32 @@ button {
     }
 
     .evento-publico-imagem {
-        min-height: 160px;
+        min-height: 180px;
     }
 
-    .container {
-        padding: 0 18px;
+    .calendario-grid {
+        grid-template-columns: repeat(7, minmax(36px, 1fr));
+    }
+
+    .calendario-dia {
+        min-height: 50px;
+        padding: 6px;
+        font-size: 0.82rem;
     }
 }
 
 @media (max-width: 520px) {
     .logo h1 {
-        font-size: 1.12rem;
+        font-size: 1rem;
+    }
+
+    .mobile-menu-btn {
+        width: 42px;
+        height: 42px;
     }
 
     .hero-content h2 {
-        font-size: 1.7rem;
+        font-size: 1.65rem;
     }
 
     .hero-actions {
@@ -1418,5 +1637,59 @@ button {
     .hero-actions .btn-primary,
     .hero-actions .btn-outline {
         width: 100%;
+    }
+
+    .section-header h2 {
+        font-size: 1.45rem;
+    }
+
+    .section-header p {
+        font-size: 0.92rem;
+    }
+
+    .casal-card-avatar img {
+        height: 220px;
+    }
+
+    .casal-card-content h3 {
+        font-size: 1.45rem;
+    }
+
+    .culto-card h3,
+    .departamento-card h3,
+    .evento-publico-topo h3 {
+        font-size: 1rem;
+    }
+
+    .calendario-card {
+        padding: 12px;
+    }
+
+    .calendario-header h3 {
+        font-size: 1rem;
+    }
+
+    .calendario-legenda {
+        font-size: 0.76rem;
+        gap: 8px;
+    }
+
+    .dias-semana div {
+        font-size: 0.68rem;
+    }
+
+    .calendario-grid {
+        gap: 4px;
+        grid-template-columns: repeat(7, minmax(30px, 1fr));
+    }
+
+    .calendario-dia {
+        min-height: 42px;
+        font-size: 0.74rem;
+        border-radius: 10px;
+    }
+
+    .footer {
+        padding: 52px 0 22px;
     }
 }

@@ -8,7 +8,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
@@ -16,27 +16,31 @@
 
     <header class="navbar">
         <div class="container nav-container">
-            <a href="#" class="logo">
+            <a href="{% url 'home' %}" class="logo">
                 <h1>Redenção</h1>
             </a>
-            <button class="mobile-menu-btn" aria-label="Abrir Menu">
+
+            <button class="mobile-menu-btn" aria-label="Abrir Menu" aria-expanded="false" aria-controls="menu-principal">
                 <i class="fas fa-bars"></i>
             </button>
-            <nav class="nav-links">
+
+            <nav class="nav-links" id="menu-principal">
                 <a href="{% url 'home' %}">Início</a>
-                <a href="#sobre">Quem Somos</a>
-                <a href="{% url 'ministerio' %}">Ministerios</a>
-                <a href="#social">Ação Social</a>
-                <a href="#galeria">Nossa Vida</a>
+                <a href="{% url 'home' %}#sobre">Quem Somos</a>
+                <a href="{% url 'ministerio' %}">Ministérios</a>
+                <a href="{% url 'home' %}#social">Ação Social</a>
+                <a href="{% url 'home' %}#galeria">Nossa Vida</a>
             </nav>
-            <a href="#assista" class="btn-primary"><i class="fas fa-play-circle"></i> Assista Online</a>
+
+            <a href="#assista" class="btn-primary">
+                <i class="fas fa-play-circle"></i> Assista Online
+            </a>
         </div>
     </header>
 
-    
-{% block conteudo %}
-       
-{% endblock %}
+    {% block conteudo %}
+    {% endblock %}
+
     <footer class="footer">
         <div class="container footer-grid">
             <div class="footer-brand">
@@ -52,11 +56,11 @@
             <div class="footer-links">
                 <h3>Links Úteis</h3>
                 <ul>
-                    <li><a href="#sobre">Nossa História</a></li>
-                    <li><a href="#ministerios">Ministerios</a></li>
-                    <li><a href="#social">Projetos Sociais</a></li>
-                    <li><a href="programacao.html">Programação</a></li>
-                    <li><a href="eventos.html">Eventos</a></li>
+                    <li><a href="{% url 'home' %}#sobre">Nossa História</a></li>
+                    <li><a href="{% url 'ministerio' %}">Ministérios</a></li>
+                    <li><a href="{% url 'home' %}#social">Projetos Sociais</a></li>
+                    <li><a href="#">Programação</a></li>
+                    <li><a href="#">Eventos</a></li>
                 </ul>
             </div>
 
@@ -67,11 +71,40 @@
                 <p><i class="fas fa-phone"></i> (00) 1234-5678</p>
             </div>
         </div>
+
         <div class="footer-bottom container">
             <p>&copy; 2026 Ministério Redenção. Todos os direitos reservados.</p>
         </div>
     </footer>
 
-    <script src="{% static 'js/script.js' %}"></script>
+    <script>
+        const menuBtn = document.querySelector('.mobile-menu-btn');
+        const navContainer = document.querySelector('.nav-container');
+
+        if (menuBtn && navContainer) {
+            menuBtn.addEventListener('click', () => {
+                navContainer.classList.toggle('nav-open');
+                const expanded = navContainer.classList.contains('nav-open');
+                menuBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            });
+        }
+
+        const fadeEls = document.querySelectorAll('.fade-in');
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+
+            fadeEls.forEach(el => observer.observe(el));
+        } else {
+            fadeEls.forEach(el => el.classList.add('visible'));
+        }
+    </script>
 </body>
 </html>

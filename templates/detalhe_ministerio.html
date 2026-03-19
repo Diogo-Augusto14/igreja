@@ -12,10 +12,11 @@
         {% if ministerio.imagem_capa %}
             style="background-image: url('{{ ministerio.imagem_capa.url }}');"
         {% else %}
-            style="background-image: url(../static/image/logo.png)"
+            style="background-image: url('{% static 'image/logo.png' %}');"
         {% endif %}
     >
         <div class="hero-overlay"></div>
+
         <div class="container hero-content fade-in">
             <span class="hero-kicker">Conheça esta congregação</span>
             <h2>{{ ministerio.nome }}</h2>
@@ -34,6 +35,7 @@
                 <div class="ministerio-topo-texto">
                     <span class="section-mini-title">Sobre a igreja</span>
                     <h2>Uma congregação com identidade própria</h2>
+
                     <p class="ministerio-descricao-principal">
                         {{ ministerio.descricao }}
                     </p>
@@ -82,19 +84,29 @@
                 <article class="casal-card">
                     <div class="casal-card-avatar">
                         {% if ministerio.foto_casal_lideranca %}
-                            <img src="{{ ministerio.foto_casal_lideranca.url }}" alt="{{ ministerio.pastor_nome }} e {{ ministerio.pastora_nome }}">
+                            <img
+                                src="{{ ministerio.foto_casal_lideranca.url }}"
+                                alt="{{ ministerio.pastor_nome }} e {{ ministerio.pastora_nome }}"
+                                loading="lazy"
+                            >
                         {% else %}
-                            <img src="{% static 'image/logo.png' %}" alt="{{ ministerio.pastor_nome }} e {{ ministerio.pastora_nome }}">
+                            <img
+                                src="{% static 'image/logo.png' %}"
+                                alt="{{ ministerio.pastor_nome }} e {{ ministerio.pastora_nome }}"
+                                loading="lazy"
+                            >
                         {% endif %}
                     </div>
 
                     <div class="casal-card-content">
                         <span class="casal-badge">Liderança pastoral</span>
+
                         <h3>
                             {% if ministerio.pastor_nome %}Pr. {{ ministerio.pastor_nome }}{% endif %}
                             {% if ministerio.pastor_nome and ministerio.pastora_nome %} &amp; {% endif %}
                             {% if ministerio.pastora_nome %}Pra. {{ ministerio.pastora_nome }}{% endif %}
                         </h3>
+
                         <p>Casal pastoral responsável por conduzir e cuidar desta congregação.</p>
                     </div>
                 </article>
@@ -154,9 +166,9 @@
                         <article class="departamento-card">
                             <div class="departamento-img-wrap">
                                 {% if departamento.imagem %}
-                                    <img src="{{ departamento.imagem.url }}" alt="{{ departamento.nome }}">
+                                    <img src="{{ departamento.imagem.url }}" alt="{{ departamento.nome }}" loading="lazy">
                                 {% else %}
-                                    <img src="{% static 'image/logo.png' %}" alt="{{ departamento.nome }}">
+                                    <img src="{% static 'image/logo.png' %}" alt="{{ departamento.nome }}" loading="lazy">
                                 {% endif %}
                             </div>
 
@@ -168,9 +180,9 @@
                                 <div class="departamento-lideranca">
                                     <div class="departamento-lideranca-foto">
                                         {% if departamento.foto_lideranca %}
-                                            <img src="{{ departamento.foto_lideranca.url }}" alt="{{ departamento.lider_nome }} e {{ departamento.lider_nome_esposa }}">
+                                            <img src="{{ departamento.foto_lideranca.url }}" alt="{{ departamento.lider_nome }} e {{ departamento.lider_nome_esposa }}" loading="lazy">
                                         {% else %}
-                                            <img src="{% static 'image/logo.png' %}" alt="{{ departamento.nome }}">
+                                            <img src="{% static 'image/logo.png' %}" alt="{{ departamento.nome }}" loading="lazy">
                                         {% endif %}
                                     </div>
 
@@ -250,7 +262,7 @@
 
                             {% if evento.imagem %}
                                 <div class="evento-publico-imagem">
-                                    <img src="{{ evento.imagem.url }}" alt="{{ evento.titulo }}">
+                                    <img src="{{ evento.imagem.url }}" alt="{{ evento.titulo }}" loading="lazy">
                                 </div>
                             {% endif %}
                         </div>
