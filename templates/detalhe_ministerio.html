@@ -9,7 +9,11 @@
 <main>
     <section
         class="hero-section min-hero"
-        style="background-image: url('{{ ministerio.imagem_capa.url }}');"
+        {% if ministerio.imagem_capa %}
+            style="background-image: url('{{ ministerio.imagem_capa.url }}');"
+        {% else %}
+            style="background-image: url('{% static 'image/logo.png' %}');"
+        {% endif %}
     >
         <div class="hero-overlay"></div>
         <div class="container hero-content fade-in">
@@ -57,7 +61,11 @@
                 </div>
 
                 <div class="ministerio-topo-imagem">
-                    <img src="{{ ministerio.imagem_principal.url }}" alt="{{ ministerio.nome }}">
+                    {% if ministerio.imagem_principal %}
+                        <img src="{{ ministerio.imagem_principal.url }}" alt="{{ ministerio.nome }}">
+                    {% else %}
+                        <img src="{% static 'image/logo.png' %}" alt="{{ ministerio.nome }}">
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -73,12 +81,20 @@
             <div class="lideranca-casal-wrap">
                 <article class="casal-card">
                     <div class="casal-card-avatar">
-                        <img src="{{ ministerio.foto_casal_lideranca.url }}" alt="{{ ministerio.pastor_nome }} e {{ ministerio.pastora_nome }}">
+                        {% if ministerio.foto_casal_lideranca %}
+                            <img src="{{ ministerio.foto_casal_lideranca.url }}" alt="{{ ministerio.pastor_nome }} e {{ ministerio.pastora_nome }}">
+                        {% else %}
+                            <img src="{% static 'image/logo.png' %}" alt="{{ ministerio.pastor_nome }} e {{ ministerio.pastora_nome }}">
+                        {% endif %}
                     </div>
 
                     <div class="casal-card-content">
                         <span class="casal-badge">Liderança pastoral</span>
-                        <h3>Pr. {{ ministerio.pastor_nome }} &amp; Pra. {{ ministerio.pastora_nome }}</h3>
+                        <h3>
+                            {% if ministerio.pastor_nome %}Pr. {{ ministerio.pastor_nome }}{% endif %}
+                            {% if ministerio.pastor_nome and ministerio.pastora_nome %} &amp; {% endif %}
+                            {% if ministerio.pastora_nome %}Pra. {{ ministerio.pastora_nome }}{% endif %}
+                        </h3>
                         <p>Casal pastoral responsável por conduzir e cuidar desta congregação.</p>
                     </div>
                 </article>
@@ -90,7 +106,7 @@
         <div class="container">
             <div class="section-header">
                 <h2>Horários e cultos</h2>
-                <p>Aqui você pode apresentar todos os dias, horários e tipos de reunião da congregação.</p>
+                <p>Acompanhe os dias, horários e tipos de reunião desta congregação.</p>
             </div>
 
             <div class="cultos-grid">
@@ -129,7 +145,7 @@
         <div class="container">
             <div class="section-header">
                 <h2>Departamentos desta congregação</h2>
-                <p>Cada departamento pode ter sua imagem, descrição e casal líder.</p>
+                <p>Cada departamento pode ter sua imagem, descrição e liderança cadastrada.</p>
             </div>
 
             <div class="departamentos-grid">
@@ -137,7 +153,11 @@
                     {% if departamento.ativo %}
                         <article class="departamento-card">
                             <div class="departamento-img-wrap">
-                                <img src="{{ departamento.imagem.url }}" alt="{{ departamento.nome }}">
+                                {% if departamento.imagem %}
+                                    <img src="{{ departamento.imagem.url }}" alt="{{ departamento.nome }}">
+                                {% else %}
+                                    <img src="{% static 'image/logo.png' %}" alt="{{ departamento.nome }}">
+                                {% endif %}
                             </div>
 
                             <div class="departamento-card-content">
@@ -147,12 +167,20 @@
 
                                 <div class="departamento-lideranca">
                                     <div class="departamento-lideranca-foto">
-                                        <img src="{{ departamento.foto_lideranca.url }}" alt="{{ departamento.lider_nome }} e {{ departamento.lider_nome_esposa }}">
+                                        {% if departamento.foto_lideranca %}
+                                            <img src="{{ departamento.foto_lideranca.url }}" alt="{{ departamento.lider_nome }} e {{ departamento.lider_nome_esposa }}">
+                                        {% else %}
+                                            <img src="{% static 'image/logo.png' %}" alt="{{ departamento.nome }}">
+                                        {% endif %}
                                     </div>
 
                                     <div class="departamento-lideranca-texto">
-                                        <small>Líderes</small>
-                                        <strong>{{ departamento.lider_nome }} e {{ departamento.lider_nome_esposa }}</strong>
+                                        <small>Liderança</small>
+                                        <strong>
+                                            {{ departamento.lider_nome }}
+                                            {% if departamento.lider_nome and departamento.lider_nome_esposa %} e {% endif %}
+                                            {{ departamento.lider_nome_esposa }}
+                                        </strong>
                                     </div>
                                 </div>
                             </div>
@@ -169,6 +197,108 @@
                             <p>Cadastre os departamentos no painel para mostrar as equipes e a importância de cada área da igreja.</p>
                         </div>
                     </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="section bg-light">
+        <div class="container">
+            <div class="section-header fade-in">
+                <span class="section-mini-title">Agenda da igreja</span>
+                <h2>Eventos e cultos do mês</h2>
+                <p>
+                    Acompanhe os próximos eventos desta igreja e também os eventos gerais do ministério.
+                    No calendário, azul escuro representa evento e azul claro representa culto.
+                </p>
+            </div>
+
+            {% if eventos %}
+                <div class="eventos-lista fade-in">
+                    {% for evento in eventos %}
+                        <div class="evento-publico-card">
+                            <div class="evento-publico-data">
+                                <span class="dia">{{ evento.data|date:"d" }}</span>
+                                <span class="mes">{{ evento.data|date:"M"|upper }}</span>
+                            </div>
+
+                            <div class="evento-publico-conteudo">
+                                <div class="evento-publico-topo">
+                                    <h3>{{ evento.titulo }}</h3>
+
+                                    {% if evento.tipo == 'geral' %}
+                                        <span class="evento-tipo-badge geral">Evento geral</span>
+                                    {% else %}
+                                        <span class="evento-tipo-badge local">Evento da igreja</span>
+                                    {% endif %}
+                                </div>
+
+                                {% if evento.descricao %}
+                                    <p>{{ evento.descricao }}</p>
+                                {% endif %}
+
+                                <div class="evento-publico-meta">
+                                    {% if evento.horario %}
+                                        <span><i class="fas fa-clock"></i> {{ evento.horario }}</span>
+                                    {% endif %}
+
+                                    {% if evento.local %}
+                                        <span><i class="fas fa-location-dot"></i> {{ evento.local }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            {% if evento.imagem %}
+                                <div class="evento-publico-imagem">
+                                    <img src="{{ evento.imagem.url }}" alt="{{ evento.titulo }}">
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="evento-vazio-card fade-in">
+                    <i class="fas fa-calendar-days"></i>
+                    <h3>Nenhum evento cadastrado no momento</h3>
+                    <p>Assim que houver eventos desta igreja ou eventos gerais, eles aparecerão aqui.</p>
+                </div>
+            {% endif %}
+
+            <div class="calendario-card fade-in">
+                <div class="calendario-header">
+                    <h3>{{ mes_nome }} de {{ ano }}</h3>
+
+                    <div class="calendario-legenda">
+                        <span><i class="legenda-evento"></i> Evento</span>
+                        <span><i class="legenda-culto"></i> Culto</span>
+                        <span><i class="legenda-ambos"></i> Evento + Culto</span>
+                    </div>
+                </div>
+
+                <div class="calendario-grid dias-semana">
+                    <div>Dom</div>
+                    <div>Seg</div>
+                    <div>Ter</div>
+                    <div>Qua</div>
+                    <div>Qui</div>
+                    <div>Sex</div>
+                    <div>Sáb</div>
+                </div>
+
+                {% for semana in calendario_semanas %}
+                    <div class="calendario-grid">
+                        {% for dia in semana %}
+                            <div class="
+                                calendario-dia
+                                {% if not dia.mes_atual %}fora-mes{% endif %}
+                                {% if dia.tem_evento %}tem-evento{% endif %}
+                                {% if dia.tem_culto %}tem-culto{% endif %}
+                                {% if dia.tem_evento and dia.tem_culto %}tem-ambos{% endif %}
+                            ">
+                                <span>{{ dia.numero }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
                 {% endfor %}
             </div>
         </div>

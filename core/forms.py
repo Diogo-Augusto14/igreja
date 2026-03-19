@@ -1,5 +1,5 @@
 from django import forms
-from .models import Culto, Departamento, Ministerio
+from .models import Culto, Departamento, Ministerio, Evento
 
 
 class MinisterioForm(forms.ModelForm):
@@ -101,3 +101,46 @@ class DepartamentoForm(forms.ModelForm):
             'ordem': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0'}),
             'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+class EventoForm(forms.ModelForm):
+    class Meta:
+        model = Evento
+        fields = [
+            'titulo',
+            'slug',
+            'descricao',
+            'tipo',
+            'ministerio',
+            'data',
+            'horario',
+            'local',
+            'imagem',
+            'ativo',
+            'destaque',
+        ]
+        widgets = {
+            'titulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 12 horas de adoração'}),
+            'slug': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 12-horas-de-adoracao'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Descrição do evento'}),
+            'tipo': forms.Select(attrs={'class': 'form-control'}),
+            'ministerio': forms.Select(attrs={'class': 'form-control'}),
+            'data': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'horario': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 19:00'}),
+            'local': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Sede - Divinópolis/MG'}),
+            'imagem': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'destaque': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        tipo = cleaned_data.get('tipo')
+        ministerio = cleaned_data.get('ministerio')
+
+        if tipo == 'local' and not ministerio:
+            self.add_error('ministerio', 'Selecione uma igreja para evento local.')
+
+        if tipo == 'geral':
+            cleaned_data['ministerio'] = None
+
+        return cleaned_data

@@ -131,3 +131,68 @@ class Departamento(models.Model):
 
     def __str__(self):
         return f'{self.ministerio.nome} - {self.nome}'
+    
+class Evento(models.Model):
+    TIPO_CHOICES = [
+        ('local', 'Evento da igreja'),
+        ('geral', 'Evento geral'),
+    ]
+
+    ministerio = models.ForeignKey(
+        'Ministerio',
+        on_delete=models.CASCADE,
+        related_name='eventos',
+        blank=True,
+        null=True
+    )
+
+    titulo = models.CharField(max_length=150)
+    slug = models.SlugField(unique=True, blank=True)
+    descricao = models.TextField(blank=True, null=True)
+
+    tipo = models.CharField(
+        max_length=10,
+        choices=TIPO_CHOICES,
+        default='local'
+    )
+
+    data = models.DateField()
+    horario = models.CharField(max_length=50, blank=True, null=True)
+    local = models.CharField(max_length=200, blank=True, null=True)
+
+    imagem = models.ImageField(
+        upload_to='eventos/',
+        blank=True,
+        null=True
+    )
+
+    ativo = models.BooleanField(default=True)
+    destaque = models.BooleanField(default=False)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['data', 'titulo']
+        verbose_name = 'Evento'
+        verbose_name_plural = 'Eventos'
+
+    def __str__(self):
+        if self.tipo == 'geral':
+            return f'{self.titulo} (Geral)'
+        return f'{self.titulo} - {self.ministerio.nome if self.ministerio else "Sem igreja"}'
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            slug_base = slugify(self.titulo)
+            slug = slug_base
+            contador = 1
+
+            while Evento.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f'{slug_base}-{contador}'
+                contador += 1
+
+            self.slug = slug
+
+        if self.tipo == 'geral':
+            self.ministerio = None
+
+        super().save(*args, **kwargs)

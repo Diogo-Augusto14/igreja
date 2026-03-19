@@ -1,0 +1,150 @@
+{% extends 'painel/base_painel.html' %}
+
+{% block titulo %}{{ titulo_pagina }} | Painel{% endblock %}
+{% block pagina_titulo %}{{ titulo_pagina }}{% endblock %}
+{% block pagina_subtitulo %}{{ subtitulo_pagina }}{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'painel_eventos' %}" class="btn btn-light">
+    <i class="fas fa-arrow-left"></i>
+    Voltar para eventos
+</a>
+{% endblock %}
+
+{% block conteudo %}
+<div class="card">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="danger-box">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="painel-section-title">
+            <h3>Dados principais</h3>
+            <p>Preencha os dados do evento. Eventos gerais aparecem para todas as igrejas. Eventos locais aparecem apenas na igreja escolhida.</p>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="{{ form.titulo.id_for_label }}">Título</label>
+                {{ form.titulo }}
+                {{ form.titulo.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.slug.id_for_label }}">Slug da URL</label>
+                {{ form.slug }}
+                {{ form.slug.errors }}
+            </div>
+
+            <div class="form-group full">
+                <label for="{{ form.descricao.id_for_label }}">Descrição</label>
+                {{ form.descricao }}
+                {{ form.descricao.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.tipo.id_for_label }}">Tipo do evento</label>
+                {{ form.tipo }}
+                {{ form.tipo.errors }}
+            </div>
+
+            <div class="form-group" id="grupo-ministerio">
+                <label for="{{ form.ministerio.id_for_label }}">Igreja</label>
+                {{ form.ministerio }}
+                {{ form.ministerio.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.data.id_for_label }}">Data</label>
+                {{ form.data }}
+                {{ form.data.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.horario.id_for_label }}">Horário</label>
+                {{ form.horario }}
+                {{ form.horario.errors }}
+            </div>
+
+            <div class="form-group full">
+                <label for="{{ form.local.id_for_label }}">Local</label>
+                {{ form.local }}
+                {{ form.local.errors }}
+            </div>
+
+            <div class="form-group full">
+                <label for="{{ form.imagem.id_for_label }}">Imagem do evento</label>
+                {{ form.imagem }}
+                {{ form.imagem.errors }}
+
+                {% if form.instance.imagem %}
+                    <div class="image-preview" style="margin-top: 14px;">
+                        <img src="{{ form.instance.imagem.url }}" alt="{{ form.instance.titulo }}">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-block-space">
+            <div class="painel-section-title">
+                <h3>Configurações</h3>
+                <p>Defina se o evento ficará visível e se terá destaque.</p>
+            </div>
+
+            <div class="form-check-row">
+                <div class="form-check">
+                    {{ form.ativo }}
+                    <label for="{{ form.ativo.id_for_label }}">Evento ativo</label>
+                </div>
+
+                <div class="form-check">
+                    {{ form.destaque }}
+                    <label for="{{ form.destaque.id_for_label }}">Evento em destaque</label>
+                </div>
+            </div>
+
+            {{ form.ativo.errors }}
+            {{ form.destaque.errors }}
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:30px; flex-wrap:wrap;">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-floppy-disk"></i>
+                {{ texto_botao }}
+            </button>
+
+            <a href="{% url 'painel_eventos' %}" class="btn btn-light">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tipoField = document.getElementById('{{ form.tipo.id_for_label }}');
+        const grupoMinisterio = document.getElementById('grupo-ministerio');
+        const ministerioField = document.getElementById('{{ form.ministerio.id_for_label }}');
+
+        function atualizarCampoMinisterio() {
+            if (!tipoField || !grupoMinisterio || !ministerioField) return;
+
+            if (tipoField.value === 'geral') {
+                grupoMinisterio.style.opacity = '0.55';
+                ministerioField.value = '';
+                ministerioField.setAttribute('disabled', 'disabled');
+            } else {
+                grupoMinisterio.style.opacity = '1';
+                ministerioField.removeAttribute('disabled');
+            }
+        }
+
+        atualizarCampoMinisterio();
+        tipoField.addEventListener('change', atualizarCampoMinisterio);
+    });
+</script>
+{% endblock %}

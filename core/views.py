@@ -1,9 +1,12 @@
+from datetime import date
+import calendar
+
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import CultoForm, DepartamentoForm, MinisterioForm
-from .models import Culto, Departamento, Ministerio
+from .forms import CultoForm, DepartamentoForm, EventoForm, MinisterioForm
+from .models import Culto, Departamento, Evento, Ministerio
 
 
 def home(request):
@@ -21,13 +24,88 @@ def ministerio(request):
 
 def detalhe_ministerio(request, slug):
     ministerio = get_object_or_404(
-        Ministerio.objects.prefetch_related('cultos', 'departamentos'),
+        Ministerio.objects.prefetch_related('cultos', 'departamentos', 'eventos'),
         slug=slug,
         ativo=True
     )
 
+    hoje = date.today()
+    ano = hoje.year
+    mes = hoje.month
+
+    nomes_meses = {
+        1: 'Janeiro',
+        2: 'Fevereiro',
+        3: 'Março',
+        4: 'Abril',
+        5: 'Maio',
+        6: 'Junho',
+        7: 'Julho',
+        8: 'Agosto',
+        9: 'Setembro',
+        10: 'Outubro',
+        11: 'Novembro',
+        12: 'Dezembro',
+    }
+
+    eventos = Evento.objects.filter(
+        ativo=True
+    ).filter(
+        Q(tipo='geral') |
+        Q(tipo='local', ministerio=ministerio)
+    ).order_by('data')
+
+    eventos_mes = eventos.filter(data__year=ano, data__month=mes)
+    dias_eventos = set(eventos_mes.values_list('data', flat=True))
+
+    mapa_dias_semana = {
+        'segunda': 0,
+        'terça': 1,
+        'terca': 1,
+        'quarta': 2,
+        'quinta': 3,
+        'sexta': 4,
+        'sábado': 5,
+        'sabado': 5,
+        'domingo': 6,
+    }
+
+    dias_cultos = set()
+    cultos = ministerio.cultos.filter(ativo=True)
+
+    cal = calendar.Calendar(firstweekday=6)
+
+    for culto in cultos:
+        nome_dia = culto.dia.strip().lower()
+
+        if nome_dia in mapa_dias_semana:
+            weekday = mapa_dias_semana[nome_dia]
+
+            for d in cal.itermonthdates(ano, mes):
+                if d.month == mes and d.weekday() == weekday:
+                    dias_cultos.add(d)
+
+    semanas = []
+    for semana in cal.monthdatescalendar(ano, mes):
+        semana_info = []
+
+        for d in semana:
+            semana_info.append({
+                'data': d,
+                'numero': d.day,
+                'mes_atual': d.month == mes,
+                'tem_evento': d in dias_eventos,
+                'tem_culto': d in dias_cultos,
+            })
+
+        semanas.append(semana_info)
+
     contexto = {
         'ministerio': ministerio,
+        'eventos': eventos,
+        'calendario_semanas': semanas,
+        'mes_nome': nomes_meses[mes],
+        'ano': ano,
     }
     return render(request, 'detalhe_ministerio.html', contexto)
 
@@ -135,7 +213,11 @@ def painel_cultos(request):
     )
 
     if busca:
-        cultos = cultos.filter(descricao__icontains=busca) | cultos.filter(dia__icontains=busca)
+        cultos = cultos.filter(
+            Q(descricao__icontains=busca) |
+            Q(dia__icontains=busca) |
+            Q(horario__icontains=busca)
+        )
 
     if ministerio_id:
         cultos = cultos.filter(ministerio_id=ministerio_id)
@@ -301,3 +383,91 @@ def excluir_departamento(request, pk):
         'departamento': departamento,
     }
     return render(request, 'painel/departamento_confirmar_exclusao.html', contexto)
+
+
+# =========================
+# CRUD EVENTOS
+# =========================
+
+@login_required
+def painel_eventos(request):
+    busca = request.GET.get('busca', '').strip()
+    tipo = request.GET.get('tipo', '').strip()
+    ministerio_id = request.GET.get('ministerio', '').strip()
+
+    eventos = Evento.objects.select_related('ministerio').all().order_by('data', 'titulo')
+
+    if busca:
+        eventos = eventos.filter(titulo__icontains=busca)
+
+    if tipo:
+        eventos = eventos.filter(tipo=tipo)
+
+    if ministerio_id:
+        eventos = eventos.filter(ministerio_id=ministerio_id)
+
+    ministerios = Ministerio.objects.all().order_by('nome')
+
+    contexto = {
+        'eventos': eventos,
+        'ministerios': ministerios,
+        'busca': busca,
+        'tipo': tipo,
+        'ministerio_id': ministerio_id,
+    }
+    return render(request, 'painel/eventos_lista.html', contexto)
+
+
+@login_required
+def criar_evento(request):
+    if request.method == 'POST':
+        form = EventoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('painel_eventos')
+    else:
+        form = EventoForm()
+
+    contexto = {
+        'form': form,
+        'titulo_pagina': 'Novo Evento',
+        'subtitulo_pagina': 'Cadastre um evento local ou geral.',
+        'texto_botao': 'Salvar evento',
+    }
+    return render(request, 'painel/evento_form.html', contexto)
+
+
+@login_required
+def editar_evento(request, pk):
+    evento = get_object_or_404(Evento, pk=pk)
+
+    if request.method == 'POST':
+        form = EventoForm(request.POST, request.FILES, instance=evento)
+        if form.is_valid():
+            form.save()
+            return redirect('painel_eventos')
+    else:
+        form = EventoForm(instance=evento)
+
+    contexto = {
+        'form': form,
+        'evento': evento,
+        'titulo_pagina': 'Editar Evento',
+        'subtitulo_pagina': f'Atualize as informações de {evento.titulo}.',
+        'texto_botao': 'Salvar alterações',
+    }
+    return render(request, 'painel/evento_form.html', contexto)
+
+
+@login_required
+def excluir_evento(request, pk):
+    evento = get_object_or_404(Evento, pk=pk)
+
+    if request.method == 'POST':
+        evento.delete()
+        return redirect('painel_eventos')
+
+    contexto = {
+        'evento': evento,
+    }
+    return render(request, 'painel/evento_confirmar_exclusao.html', contexto)

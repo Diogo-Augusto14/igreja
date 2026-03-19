@@ -1,70 +1,91 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block titulo %}Painel de Controle{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/style_painel.css' %}">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/style_painel.css' %}" />
     {% block extra_head %}{% endblock %}
-</head>
-<body>
+  </head>
+  <body>
     <div class="painel-layout">
-        <aside class="sidebar">
-            <div class="brand">
-                <span>Painel Administrativo</span>
-                <h1>Ministério Redenção</h1>
-                <p>Gerencie o conteúdo do site de forma organizada.</p>
-            </div>
+      <aside class="sidebar">
+        <div class="brand">
+          <span>Painel Administrativo</span>
+          <h1>Ministério Redenção</h1>
+          <p>Gerencie o conteúdo do site de forma organizada.</p>
+        </div>
 
-            <div class="menu-title">Principal</div>
-            <nav class="menu">
-                <a href="{% url 'painel_home' %}" class="{% if request.resolver_match.url_name == 'painel_home' %}active{% endif %}">
-                    <i class="fas fa-chart-line"></i>
-                    Dashboard
-                </a>
+        <div class="menu-title">Principal</div>
+        <nav class="menu">
+          <a
+            href="{% url 'painel_home' %}"
+            class="{% if request.resolver_match.url_name == 'painel_home' %}active{% endif %}"
+          >
+            <i class="fas fa-chart-line"></i>
+            Dashboard
+          </a>
 
-                <a href="{% url 'painel_ministerios' %}" class="{% if request.resolver_match.url_name == 'painel_ministerios' or request.resolver_match.url_name == 'criar_ministerio' or request.resolver_match.url_name == 'editar_ministerio' or request.resolver_match.url_name == 'excluir_ministerio' %}active{% endif %}">
-                    <i class="fas fa-church"></i>
-                    Igrejas
-                </a>
+          <a
+            href="{% url 'painel_ministerios' %}"
+            class="{% if request.resolver_match.url_name == 'painel_ministerios' or request.resolver_match.url_name == 'criar_ministerio' or request.resolver_match.url_name == 'editar_ministerio' or request.resolver_match.url_name == 'excluir_ministerio' %}active{% endif %}"
+          >
+            <i class="fas fa-church"></i>
+            Igrejas
+          </a>
 
-                <a href="{% url 'painel_cultos' %}" class="{% if request.resolver_match.url_name == 'painel_cultos' or request.resolver_match.url_name == 'criar_culto' or request.resolver_match.url_name == 'editar_culto' or request.resolver_match.url_name == 'excluir_culto' %}active{% endif %}">
-                    <i class="fas fa-clock"></i>
-                    Cultos
-                </a>
+          <a
+            href="{% url 'painel_cultos' %}"
+            class="{% if request.resolver_match.url_name == 'painel_cultos' or request.resolver_match.url_name == 'criar_culto' or request.resolver_match.url_name == 'editar_culto' or request.resolver_match.url_name == 'excluir_culto' %}active{% endif %}"
+          >
+            <i class="fas fa-clock"></i>
+            Cultos
+          </a>
 
-                <a href="{% url 'painel_departamentos' %}" class="{% if request.resolver_match.url_name == 'painel_departamentos' or request.resolver_match.url_name == 'criar_departamento' or request.resolver_match.url_name == 'editar_departamento' or request.resolver_match.url_name == 'excluir_departamento' %}active{% endif %}">
-                    <i class="fas fa-users"></i>
-                    Departamentos
-                </a>
+          <a
+            href="{% url 'painel_departamentos' %}"
+            class="{% if request.resolver_match.url_name == 'painel_departamentos' or request.resolver_match.url_name == 'criar_departamento' or request.resolver_match.url_name == 'editar_departamento' or request.resolver_match.url_name == 'excluir_departamento' %}active{% endif %}"
+          >
+            <i class="fas fa-users"></i>
+            Departamentos
+          </a>
 
-                <a href="#">
-                    <i class="fas fa-calendar-days"></i>
-                    Eventos
-                </a>
-            </nav>
+          <a
+            href="{% url 'painel_eventos' %}"
+            class="{% if request.resolver_match.url_name == 'painel_eventos' or request.resolver_match.url_name == 'criar_evento' or request.resolver_match.url_name == 'editar_evento' or request.resolver_match.url_name == 'excluir_evento' %}active{% endif %}"
+          >
+            <i class="fas fa-calendar-days"></i>
+            Eventos
+          </a>
+        </nav>
 
-            <div class="menu-small-note">
-                Cada igreja poderá ter seus próprios horários, departamentos, fotos e detalhes.
-            </div>
-        </aside>
+        <div class="menu-small-note">
+          Cada igreja poderá ter seus próprios horários, departamentos, fotos e
+          detalhes.
+        </div>
+      </aside>
 
-        <main class="main">
-            <div class="topbar">
-                <div>
-                    <h2>{% block pagina_titulo %}Painel{% endblock %}</h2>
-                    <p>{% block pagina_subtitulo %}Gerencie o conteúdo do sistema.{% endblock %}</p>
-                </div>
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <h2>{% block pagina_titulo %}Painel{% endblock %}</h2>
+            <p>
+              {% block pagina_subtitulo %}Gerencie o conteúdo do sistema.{% endblock %}
+            </p>
+          </div>
 
-                <div class="topbar-actions">
-                    {% block topbar_actions %}{% endblock %}
-                </div>
-            </div>
+          <div class="topbar-actions">
+            {% block topbar_actions %}{% endblock %}
+          </div>
+        </div>
 
-            {% block conteudo %}{% endblock %}
-        </main>
+        {% block conteudo %}{% endblock %}
+      </main>
     </div>
-</body>
+  </body>
 </html>

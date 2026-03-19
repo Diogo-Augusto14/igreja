@@ -21,6 +21,10 @@ from core.views import (
     painel_departamentos,
     painel_home,
     painel_ministerios,
+    criar_evento,
+    editar_evento,
+    excluir_evento,
+    painel_eventos,
 )
 
 urlpatterns = [
@@ -46,6 +50,11 @@ urlpatterns = [
     path('painel/departamentos/novo/', criar_departamento, name='criar_departamento'),
     path('painel/departamentos/<int:pk>/editar/', editar_departamento, name='editar_departamento'),
     path('painel/departamentos/<int:pk>/excluir/', excluir_departamento, name='excluir_departamento'),
+
+    path('painel/eventos/', painel_eventos, name='painel_eventos'),
+    path('painel/eventos/novo/', criar_evento, name='criar_evento'),
+    path('painel/eventos/<int:pk>/editar/', editar_evento, name='editar_evento'),
+    path('painel/eventos/<int:pk>/excluir/', excluir_evento, name='excluir_evento'),
 
     path('accounts/login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
 ]

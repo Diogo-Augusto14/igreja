@@ -1,0 +1,167 @@
+{% extends 'painel/base_painel.html' %}
+
+{% block titulo %}Eventos | Painel{% endblock %}
+{% block pagina_titulo %}Eventos cadastrados{% endblock %}
+{% block pagina_subtitulo %}Gerencie eventos locais das igrejas e eventos gerais do ministério.{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'criar_evento' %}" class="btn btn-primary">
+    <i class="fas fa-plus"></i>
+    Novo evento
+</a>
+{% endblock %}
+
+{% block conteudo %}
+<div class="card">
+    <div class="toolbar">
+        <form method="get" class="search-form" style="max-width: 100%; display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 12px;">
+            <input
+                type="text"
+                name="busca"
+                value="{{ busca }}"
+                placeholder="Buscar evento pelo título..."
+                class="form-control"
+            >
+
+            <select name="tipo" class="form-control">
+                <option value="">Todos os tipos</option>
+                <option value="local" {% if tipo == 'local' %}selected{% endif %}>Evento da igreja</option>
+                <option value="geral" {% if tipo == 'geral' %}selected{% endif %}>Evento geral</option>
+            </select>
+
+            <select name="ministerio" class="form-control">
+                <option value="">Todas as igrejas</option>
+                {% for ministerio in ministerios %}
+                    <option value="{{ ministerio.id }}" {% if ministerio_id == ministerio.id|stringformat:"s" %}selected{% endif %}>
+                        {{ ministerio.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="btn btn-light">
+                <i class="fas fa-search"></i>
+                Filtrar
+            </button>
+        </form>
+    </div>
+
+    {% if eventos %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Imagem</th>
+                        <th>Evento</th>
+                        <th>Tipo</th>
+                        <th>Igreja</th>
+                        <th>Data</th>
+                        <th>Horário</th>
+                        <th>Local</th>
+                        <th>Status</th>
+                        <th>Destaque</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evento in eventos %}
+                    <tr>
+                        <td>
+                            {% if evento.imagem %}
+                                <img src="{{ evento.imagem.url }}" alt="{{ evento.titulo }}" class="thumb">
+                            {% else %}
+                                <div class="thumb" style="display:flex;align-items:center;justify-content:center;background:#f3f4f6;color:#9ca3af;">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <strong>{{ evento.titulo }}</strong><br>
+                            <span style="color:#6b7280;font-size:0.9rem;">
+                                {% if evento.descricao %}
+                                    {{ evento.descricao|truncatechars:70 }}
+                                {% else %}
+                                    Sem descrição cadastrada
+                                {% endif %}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if evento.tipo == 'geral' %}
+                                <span class="badge badge-warning">Geral</span>
+                            {% else %}
+                                <span class="badge badge-success">Da igreja</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if evento.tipo == 'geral' %}
+                                <span style="color:#1d4ed8;font-weight:600;">Todas as igrejas</span>
+                            {% elif evento.ministerio %}
+                                {{ evento.ministerio.nome }}
+                            {% else %}
+                                <span style="color:#94a3b8;">Não informado</span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ evento.data|date:"d/m/Y" }}</td>
+
+                        <td>
+                            {% if evento.horario %}
+                                {{ evento.horario }}
+                            {% else %}
+                                <span style="color:#94a3b8;">Não informado</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if evento.local %}
+                                {{ evento.local }}
+                            {% else %}
+                                <span style="color:#94a3b8;">Não informado</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if evento.ativo %}
+                                <span class="badge badge-success">Ativo</span>
+                            {% else %}
+                                <span class="badge badge-muted">Inativo</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if evento.destaque %}
+                                <span class="badge badge-warning">Destaque</span>
+                            {% else %}
+                                <span class="badge badge-muted">Normal</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="actions">
+                                <a href="{% url 'editar_evento' evento.pk %}" class="btn btn-sm btn-edit">
+                                    <i class="fas fa-pen"></i>
+                                    Editar
+                                </a>
+
+                                <a href="{% url 'excluir_evento' evento.pk %}" class="btn btn-sm btn-delete">
+                                    <i class="fas fa-trash"></i>
+                                    Excluir
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-calendar-days"></i>
+            <h3 style="margin-bottom: 10px; color:#111827;">Nenhum evento cadastrado</h3>
+            <p>Cadastre eventos locais e gerais para preencher a agenda das igrejas.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

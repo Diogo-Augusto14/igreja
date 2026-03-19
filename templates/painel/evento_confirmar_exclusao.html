@@ -1,0 +1,92 @@
+{% extends 'painel/base_painel.html' %}
+
+{% block titulo %}Excluir Evento | Painel{% endblock %}
+{% block pagina_titulo %}Excluir evento{% endblock %}
+{% block pagina_subtitulo %}Confirme a exclusão do evento selecionado.{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'painel_eventos' %}" class="btn btn-light">
+    <i class="fas fa-arrow-left"></i>
+    Voltar para eventos
+</a>
+{% endblock %}
+
+{% block conteudo %}
+<div class="card">
+    <div class="danger-box">
+        <strong>Atenção:</strong> essa ação não poderá ser desfeita.
+    </div>
+
+    <div class="painel-section-title">
+        <h3>Você tem certeza que deseja excluir este evento?</h3>
+        <p>Revise as informações abaixo antes de confirmar.</p>
+    </div>
+
+    <div class="card" style="background:#f8fafc; border:1px solid #e5e7eb;">
+        <div style="display:grid; grid-template-columns: 120px 1fr; gap:20px; align-items:center;">
+            <div>
+                {% if evento.imagem %}
+                    <img src="{{ evento.imagem.url }}" alt="{{ evento.titulo }}" class="thumb" style="width:120px;height:120px;">
+                {% else %}
+                    <div class="thumb" style="width:120px;height:120px;display:flex;align-items:center;justify-content:center;background:#e5e7eb;color:#94a3b8;">
+                        <i class="fas fa-calendar-days" style="font-size:2rem;"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <h3 style="margin-bottom:10px; color:#111827;">{{ evento.titulo }}</h3>
+
+                <p style="margin-bottom:8px; color:#4b5563;">
+                    <strong>Tipo:</strong>
+                    {% if evento.tipo == 'geral' %}
+                        Evento geral
+                    {% else %}
+                        Evento da igreja
+                    {% endif %}
+                </p>
+
+                <p style="margin-bottom:8px; color:#4b5563;">
+                    <strong>Igreja:</strong>
+                    {% if evento.tipo == 'geral' %}
+                        Todas as igrejas
+                    {% elif evento.ministerio %}
+                        {{ evento.ministerio.nome }}
+                    {% else %}
+                        Não informada
+                    {% endif %}
+                </p>
+
+                <p style="margin-bottom:8px; color:#4b5563;">
+                    <strong>Data:</strong> {{ evento.data|date:"d/m/Y" }}
+                </p>
+
+                {% if evento.horario %}
+                    <p style="margin-bottom:8px; color:#4b5563;">
+                        <strong>Horário:</strong> {{ evento.horario }}
+                    </p>
+                {% endif %}
+
+                {% if evento.local %}
+                    <p style="color:#4b5563;">
+                        <strong>Local:</strong> {{ evento.local }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <form method="post" style="margin-top:24px; display:flex; gap:12px; flex-wrap:wrap;">
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-delete">
+            <i class="fas fa-trash"></i>
+            Sim, excluir evento
+        </button>
+
+        <a href="{% url 'painel_eventos' %}" class="btn btn-light">
+            Cancelar
+        </a>
+    </form>
+</div>
+{% endblock %}
