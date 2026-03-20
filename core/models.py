@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
 
@@ -108,15 +107,18 @@ class PerfilAcesso(models.Model):
         return f'{self.user.username} - {self.ministerio or "Sem igreja"}'
 
     def clean(self):
-        if self.escopo == self.ESCOPO_ADMIN_IGREJA and not self.ministerio:
-            raise ValidationError({'ministerio': 'Selecione a igreja vinculada a este usuário.'})
-
         if self.escopo == self.ESCOPO_ADMIN_GERAL:
             self.ministerio = None
 
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+        user = self.user
+        deve_acessar_admin = user.is_superuser or self.escopo == self.ESCOPO_ADMIN_GERAL
+        if user.is_staff != deve_acessar_admin:
+            user.is_staff = deve_acessar_admin
+            user.save(update_fields=['is_staff'])
 
 
 class Culto(models.Model):

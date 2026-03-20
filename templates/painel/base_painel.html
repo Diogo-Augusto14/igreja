@@ -81,6 +81,10 @@
 
           <div class="topbar-actions" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
             {% if request.user.is_authenticated %}
+              <a href="{% url 'home' %}" class="btn btn-light">
+                <i class="fas fa-globe"></i>
+                Voltar ao site
+              </a>
               <div style="text-align:right;">
                 <strong style="display:block; color:#111827;">{{ request.user.get_full_name|default:request.user.username }}</strong>
                 {% if request.user.is_superuser or request.user.perfil_acesso.escopo == 'admin_geral' %}

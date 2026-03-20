@@ -88,6 +88,14 @@ class PainelAcessoPorIgrejaTests(TestCase):
         self.assertContains(response, 'Igreja 1')
         self.assertContains(response, 'Igreja 2')
 
+    def test_usuario_comum_e_redirecionado_ao_tentar_abrir_admin(self):
+        self.client.login(username='igreja1', password='123456')
+
+        response = self.client.get('/admin/', follow=True)
+
+        self.assertRedirects(response, reverse('painel_home'))
+        self.assertContains(response, 'O Django Admin é liberado somente para o administrador geral.')
+
     def test_auditoria_e_registrada_ao_criar_culto(self):
         self.client.login(username='igreja1', password='123456')
 
