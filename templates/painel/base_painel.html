@@ -18,7 +18,7 @@
         <div class="brand">
           <span>Painel Administrativo</span>
           <h1>Ministério Redenção</h1>
-          <p>Gerencie o conteúdo do site de forma organizada.</p>
+          <p>Gerencie o conteúdo do site com acesso separado por igreja.</p>
         </div>
 
         <div class="menu-title">Principal</div>
@@ -65,8 +65,8 @@
         </nav>
 
         <div class="menu-small-note">
-          Cada igreja poderá ter seus próprios horários, departamentos, fotos e
-          detalhes.
+          Cada usuário atua apenas na própria igreja, evitando alterações cruzadas
+          e deixando um histórico claro de quem mexeu em cada cadastro.
         </div>
       </aside>
 
@@ -79,10 +79,38 @@
             </p>
           </div>
 
-          <div class="topbar-actions">
+          <div class="topbar-actions" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            {% if request.user.is_authenticated %}
+              <div style="text-align:right;">
+                <strong style="display:block; color:#111827;">{{ request.user.get_full_name|default:request.user.username }}</strong>
+                {% if request.user.is_superuser or request.user.perfil_acesso.escopo == 'admin_geral' %}
+                  <span style="font-size:0.88rem; color:#1d4ed8;">Administrador geral</span>
+                {% elif request.user.perfil_acesso.ministerio %}
+                  <span style="font-size:0.88rem; color:#475569;">{{ request.user.perfil_acesso.ministerio.nome }}</span>
+                {% else %}
+                  <span style="font-size:0.88rem; color:#b45309;">Sem igreja vinculada</span>
+                {% endif %}
+              </div>
+              <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-light">
+                  <i class="fas fa-right-from-bracket"></i>
+                  Sair
+                </button>
+              </form>
+            {% endif %}
             {% block topbar_actions %}{% endblock %}
           </div>
         </div>
+
+
+        {% if messages %}
+          <div style="display:grid; gap:12px; margin-bottom:20px;">
+            {% for message in messages %}
+              <div class="painel-alert {% if message.tags == 'error' %}painel-alert-warning{% else %}painel-alert-info{% endif %}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
 
         {% block conteudo %}{% endblock %}
       </main>

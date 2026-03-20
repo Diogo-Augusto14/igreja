@@ -25,6 +25,7 @@ from core.views import (
     editar_evento,
     excluir_evento,
     painel_eventos,
+    PainelLoginView,
 )
 
 urlpatterns = [
@@ -56,7 +57,8 @@ urlpatterns = [
     path('painel/eventos/<int:pk>/editar/', editar_evento, name='editar_evento'),
     path('painel/eventos/<int:pk>/excluir/', excluir_evento, name='excluir_evento'),
 
-    path('accounts/login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('accounts/login/', PainelLoginView.as_view(), name='login'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
 
 if settings.DEBUG:
