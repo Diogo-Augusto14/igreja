@@ -2,13 +2,15 @@
 
 {% block titulo %}Ministérios | Painel{% endblock %}
 {% block pagina_titulo %}Igrejas cadastradas{% endblock %}
-{% block pagina_subtitulo %}Gerencie todas as congregações do Ministério Redenção.{% endblock %}
+{% block pagina_subtitulo %}Veja apenas as igrejas liberadas para o seu usuário e mantenha cada cadastro separado.{% endblock %}
 
 {% block topbar_actions %}
+{% if usuario_pode_gerenciar_tudo %}
 <a href="{% url 'criar_ministerio' %}" class="btn btn-primary">
     <i class="fas fa-plus"></i>
     Nova igreja
 </a>
+{% endif %}
 {% endblock %}
 
 {% block conteudo %}
@@ -102,10 +104,12 @@
                                     Editar
                                 </a>
 
+                                {% if usuario_pode_gerenciar_tudo %}
                                 <a href="{% url 'excluir_ministerio' ministerio.pk %}" class="btn btn-sm btn-delete">
                                     <i class="fas fa-trash"></i>
                                     Excluir
                                 </a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

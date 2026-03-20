@@ -2,7 +2,7 @@
 
 {% block titulo %}Dashboard | Painel{% endblock %}
 {% block pagina_titulo %}Dashboard{% endblock %}
-{% block pagina_subtitulo %}Resumo geral do painel administrativo do Ministério Redenção.{% endblock %}
+{% block pagina_subtitulo %}Resumo do acesso atual e dos módulos disponíveis para a sua igreja.{% endblock %}
 
 {% block conteudo %}
 <div class="stats-grid">
@@ -23,14 +23,36 @@
         <h3>{{ ministerios_destaque }}</h3>
         <p>Itens marcados para ganhar mais evidência.</p>
     </div>
+    <div class="stat-card">
+        <span>Total de cultos</span>
+        <h3>{{ total_cultos }}</h3>
+        <p>Horários disponíveis dentro do seu escopo de acesso.</p>
+    </div>
+
+    <div class="stat-card">
+        <span>Departamentos</span>
+        <h3>{{ total_departamentos }}</h3>
+        <p>Departamentos que você pode administrar.</p>
+    </div>
+
+    <div class="stat-card">
+        <span>Eventos</span>
+        <h3>{{ total_eventos }}</h3>
+        <p>Eventos disponíveis para o seu perfil.</p>
+    </div>
 </div>
 
 <div class="dashboard-grid">
     <div class="card">
         <h3 class="dashboard-title">Módulos já disponíveis no painel</h3>
         <p class="dashboard-text">
-            O painel já permite gerenciar as igrejas, seus horários de culto e os
-            departamentos vinculados a cada congregação.
+            {% if usuario_pode_gerenciar_tudo %}
+                Você está com acesso de administrador geral e pode cadastrar igrejas, vincular usuários e acompanhar todas as ações.
+            {% elif ministerio_usuario %}
+                Você está logado como responsável pela igreja <strong>{{ ministerio_usuario.nome }}</strong> e só enxerga os registros dessa congregação.
+            {% else %}
+                Seu usuário ainda não foi vinculado a uma igreja. Peça ao administrador geral para finalizar a configuração.
+            {% endif %}
         </p>
 
         <div class="dashboard-check-list">
@@ -57,11 +79,11 @@
         <h3 class="dashboard-title">Visão do sistema</h3>
         <p class="dashboard-text">
             O objetivo desse painel é deixar cada igreja com sua própria página detalhada,
-            com cultos, departamentos, fotos, liderança e todas as informações organizadas.
+            com isolamento por login, rastreabilidade das alterações e segurança para evitar que uma pessoa mexa sem querer na igreja da outra.
         </p>
 
         <div class="painel-alert painel-alert-info" style="margin-top: 18px;">
-            Igrejas, cultos e departamentos já estão integrados ao painel.
+            O vínculo do usuário com a igreja é configurado no Django Admin, junto com o histórico de login e de alterações.
         </div>
     </div>
 </div>

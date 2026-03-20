@@ -25,7 +25,7 @@
                 >
 
                 <select name="ministerio" class="form-control" style="max-width: 320px;">
-                    <option value="">Todas as igrejas</option>
+                    <option value="">{% if usuario_pode_gerenciar_tudo %}Todas as igrejas{% else %}Sua igreja{% endif %}</option>
                     {% for ministerio in ministerios %}
                         <option value="{{ ministerio.id }}" {% if ministerio_id == ministerio.id|stringformat:'s' %}selected{% endif %}>
                             {{ ministerio.nome }}

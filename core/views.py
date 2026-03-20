@@ -1,13 +1,44 @@
-from datetime import date
 import calendar
+from datetime import date
 
+from django.contrib import messages
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
+from .access import (
+    ensure_user_can_access_ministerio,
+    ensure_user_has_ministerio,
+    get_allowed_ministerios,
+    get_user_ministerio,
+    user_can_manage_all,
+)
 from .forms import CultoForm, DepartamentoForm, EventoForm, MinisterioForm
-from .models import Culto, Departamento, Evento, Ministerio
+from .models import Culto, Departamento, Evento, Ministerio, RegistroAuditoria
 
+
+class PainelLoginView(auth_views.LoginView):
+    template_name = 'login.html'
+
+    def get_success_url(self):
+        return self.get_redirect_url() or '/painel/'
+
+
+def registrar_auditoria(user, acao, entidade, registro=None, ministerio=None, descricao=''):
+    RegistroAuditoria.objects.create(
+        user=user,
+        ministerio=ministerio,
+        acao=acao,
+        entidade=entidade,
+        registro_id=getattr(registro, 'pk', None),
+        descricao=descricao,
+    )
+
+
+# =========================
+# SITE PÚBLICO
+# =========================
 
 def home(request):
     return render(request, 'home.html', {})
@@ -26,7 +57,7 @@ def detalhe_ministerio(request, slug):
     ministerio = get_object_or_404(
         Ministerio.objects.prefetch_related('cultos', 'departamentos', 'eventos'),
         slug=slug,
-        ativo=True
+        ativo=True,
     )
 
     hoje = date.today()
@@ -48,11 +79,8 @@ def detalhe_ministerio(request, slug):
         12: 'Dezembro',
     }
 
-    eventos = Evento.objects.filter(
-        ativo=True
-    ).filter(
-        Q(tipo='geral') |
-        Q(tipo='local', ministerio=ministerio)
+    eventos = Evento.objects.filter(ativo=True).filter(
+        Q(tipo='geral') | Q(tipo='local', ministerio=ministerio)
     ).order_by('data')
 
     eventos_mes = eventos.filter(data__year=ano, data__month=mes)
@@ -110,16 +138,61 @@ def detalhe_ministerio(request, slug):
     return render(request, 'detalhe_ministerio.html', contexto)
 
 
+# =========================
+# HELPERS DO PAINEL
+# =========================
+
+def queryset_ministerios_do_usuario(user):
+    return get_allowed_ministerios(user).order_by('ordem', 'nome')
+
+
+def queryset_cultos_do_usuario(user):
+    cultos = Culto.objects.select_related('ministerio').all()
+    if user_can_manage_all(user):
+        return cultos
+    ministerio = ensure_user_has_ministerio(user)
+    return cultos.filter(ministerio=ministerio)
+
+
+def queryset_departamentos_do_usuario(user):
+    departamentos = Departamento.objects.select_related('ministerio').all()
+    if user_can_manage_all(user):
+        return departamentos
+    ministerio = ensure_user_has_ministerio(user)
+    return departamentos.filter(ministerio=ministerio)
+
+
+def queryset_eventos_do_usuario(user):
+    eventos = Evento.objects.select_related('ministerio').all()
+    if user_can_manage_all(user):
+        return eventos
+    ministerio = ensure_user_has_ministerio(user)
+    return eventos.filter(tipo='local', ministerio=ministerio)
+
+
+# =========================
+# PAINEL
+# =========================
+
 @login_required
 def painel_home(request):
-    total_ministerios = Ministerio.objects.count()
-    ministerios_ativos = Ministerio.objects.filter(ativo=True).count()
-    ministerios_destaque = Ministerio.objects.filter(destaque=True).count()
+    ministerios = queryset_ministerios_do_usuario(request.user)
+    total_ministerios = ministerios.count()
+    ministerios_ativos = ministerios.filter(ativo=True).count()
+    ministerios_destaque = ministerios.filter(destaque=True).count()
+    total_cultos = queryset_cultos_do_usuario(request.user).count()
+    total_departamentos = queryset_departamentos_do_usuario(request.user).count()
+    total_eventos = queryset_eventos_do_usuario(request.user).count()
 
     contexto = {
         'total_ministerios': total_ministerios,
         'ministerios_ativos': ministerios_ativos,
         'ministerios_destaque': ministerios_destaque,
+        'total_cultos': total_cultos,
+        'total_departamentos': total_departamentos,
+        'total_eventos': total_eventos,
+        'usuario_pode_gerenciar_tudo': user_can_manage_all(request.user),
+        'ministerio_usuario': get_user_ministerio(request.user),
     }
     return render(request, 'painel/home.html', contexto)
 
@@ -131,8 +204,7 @@ def painel_home(request):
 @login_required
 def painel_ministerios(request):
     busca = request.GET.get('busca', '').strip()
-
-    ministerios = Ministerio.objects.all().order_by('ordem', 'nome')
+    ministerios = queryset_ministerios_do_usuario(request.user)
 
     if busca:
         ministerios = ministerios.filter(nome__icontains=busca)
@@ -140,19 +212,33 @@ def painel_ministerios(request):
     contexto = {
         'ministerios': ministerios,
         'busca': busca,
+        'usuario_pode_gerenciar_tudo': user_can_manage_all(request.user),
     }
     return render(request, 'painel/ministerios_lista.html', contexto)
 
 
 @login_required
 def criar_ministerio(request):
+    if not user_can_manage_all(request.user):
+        messages.error(request, 'Somente o administrador geral pode cadastrar novas igrejas.')
+        return redirect('painel_ministerios')
+
     if request.method == 'POST':
-        form = MinisterioForm(request.POST, request.FILES)
+        form = MinisterioForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
-            form.save()
+            ministerio = form.save()
+            registrar_auditoria(
+                request.user,
+                RegistroAuditoria.ACAO_CRIAR,
+                'Ministério',
+                registro=ministerio,
+                ministerio=ministerio,
+                descricao=f'Criou a igreja {ministerio.nome}.',
+            )
+            messages.success(request, 'Igreja cadastrada com sucesso.')
             return redirect('painel_ministerios')
     else:
-        form = MinisterioForm()
+        form = MinisterioForm(user=request.user)
 
     contexto = {
         'form': form,
@@ -165,15 +251,25 @@ def criar_ministerio(request):
 
 @login_required
 def editar_ministerio(request, pk):
-    ministerio = get_object_or_404(Ministerio, pk=pk)
+    ministerio = get_object_or_404(queryset_ministerios_do_usuario(request.user), pk=pk)
+    ensure_user_can_access_ministerio(request.user, ministerio)
 
     if request.method == 'POST':
-        form = MinisterioForm(request.POST, request.FILES, instance=ministerio)
+        form = MinisterioForm(request.POST, request.FILES, instance=ministerio, user=request.user)
         if form.is_valid():
-            form.save()
+            ministerio = form.save()
+            registrar_auditoria(
+                request.user,
+                RegistroAuditoria.ACAO_EDITAR,
+                'Ministério',
+                registro=ministerio,
+                ministerio=ministerio,
+                descricao=f'Atualizou os dados da igreja {ministerio.nome}.',
+            )
+            messages.success(request, 'Igreja atualizada com sucesso.')
             return redirect('painel_ministerios')
     else:
-        form = MinisterioForm(instance=ministerio)
+        form = MinisterioForm(instance=ministerio, user=request.user)
 
     contexto = {
         'form': form,
@@ -187,10 +283,24 @@ def editar_ministerio(request, pk):
 
 @login_required
 def excluir_ministerio(request, pk):
+    if not user_can_manage_all(request.user):
+        messages.error(request, 'Somente o administrador geral pode excluir igrejas.')
+        return redirect('painel_ministerios')
+
     ministerio = get_object_or_404(Ministerio, pk=pk)
 
     if request.method == 'POST':
+        nome = ministerio.nome
+        registrar_auditoria(
+            request.user,
+            RegistroAuditoria.ACAO_EXCLUIR,
+            'Ministério',
+            registro=ministerio,
+            ministerio=ministerio,
+            descricao=f'Excluiu a igreja {nome}.',
+        )
         ministerio.delete()
+        messages.success(request, 'Igreja excluída com sucesso.')
         return redirect('painel_ministerios')
 
     contexto = {
@@ -208,9 +318,7 @@ def painel_cultos(request):
     busca = request.GET.get('busca', '').strip()
     ministerio_id = request.GET.get('ministerio', '').strip()
 
-    cultos = Culto.objects.select_related('ministerio').all().order_by(
-        'ministerio__nome', 'ordem', 'id'
-    )
+    cultos = queryset_cultos_do_usuario(request.user).order_by('ministerio__nome', 'ordem', 'id')
 
     if busca:
         cultos = cultos.filter(
@@ -222,32 +330,47 @@ def painel_cultos(request):
     if ministerio_id:
         cultos = cultos.filter(ministerio_id=ministerio_id)
 
-    ministerios = Ministerio.objects.all().order_by('nome')
+    ministerios = queryset_ministerios_do_usuario(request.user).order_by('nome')
 
     contexto = {
         'cultos': cultos,
         'ministerios': ministerios,
         'busca': busca,
         'ministerio_id': ministerio_id,
+        'usuario_pode_gerenciar_tudo': user_can_manage_all(request.user),
     }
     return render(request, 'painel/cultos_lista.html', contexto)
 
 
 @login_required
 def criar_culto(request):
+    ensure_user_has_ministerio(request.user)
+
     if request.method == 'POST':
-        form = CultoForm(request.POST)
+        form = CultoForm(request.POST, user=request.user)
         if form.is_valid():
-            form.save()
+            culto = form.save()
+            registrar_auditoria(
+                request.user,
+                RegistroAuditoria.ACAO_CRIAR,
+                'Culto',
+                registro=culto,
+                ministerio=culto.ministerio,
+                descricao=f'Cadastrou o culto {culto.dia} - {culto.horario} para {culto.ministerio.nome}.',
+            )
+            messages.success(request, 'Culto cadastrado com sucesso.')
             return redirect('painel_cultos')
     else:
         ministerio_id = request.GET.get('ministerio')
         initial = {}
+        ministerios = queryset_ministerios_do_usuario(request.user)
 
-        if ministerio_id:
+        if ministerio_id and ministerios.filter(pk=ministerio_id).exists():
             initial['ministerio'] = ministerio_id
+        elif ministerios.count() == 1:
+            initial['ministerio'] = ministerios.first().pk
 
-        form = CultoForm(initial=initial)
+        form = CultoForm(initial=initial, user=request.user)
 
     contexto = {
         'form': form,
@@ -260,15 +383,24 @@ def criar_culto(request):
 
 @login_required
 def editar_culto(request, pk):
-    culto = get_object_or_404(Culto, pk=pk)
+    culto = get_object_or_404(queryset_cultos_do_usuario(request.user), pk=pk)
 
     if request.method == 'POST':
-        form = CultoForm(request.POST, instance=culto)
+        form = CultoForm(request.POST, instance=culto, user=request.user)
         if form.is_valid():
-            form.save()
+            culto = form.save()
+            registrar_auditoria(
+                request.user,
+                RegistroAuditoria.ACAO_EDITAR,
+                'Culto',
+                registro=culto,
+                ministerio=culto.ministerio,
+                descricao=f'Atualizou o culto {culto.dia} - {culto.horario} da igreja {culto.ministerio.nome}.',
+            )
+            messages.success(request, 'Culto atualizado com sucesso.')
             return redirect('painel_cultos')
     else:
-        form = CultoForm(instance=culto)
+        form = CultoForm(instance=culto, user=request.user)
 
     contexto = {
         'form': form,
@@ -282,10 +414,19 @@ def editar_culto(request, pk):
 
 @login_required
 def excluir_culto(request, pk):
-    culto = get_object_or_404(Culto, pk=pk)
+    culto = get_object_or_404(queryset_cultos_do_usuario(request.user), pk=pk)
 
     if request.method == 'POST':
+        registrar_auditoria(
+            request.user,
+            RegistroAuditoria.ACAO_EXCLUIR,
+            'Culto',
+            registro=culto,
+            ministerio=culto.ministerio,
+            descricao=f'Excluiu o culto {culto.dia} - {culto.horario} da igreja {culto.ministerio.nome}.',
+        )
         culto.delete()
+        messages.success(request, 'Culto excluído com sucesso.')
         return redirect('painel_cultos')
 
     contexto = {
@@ -303,7 +444,7 @@ def painel_departamentos(request):
     busca = request.GET.get('busca', '').strip()
     ministerio_id = request.GET.get('ministerio', '').strip()
 
-    departamentos = Departamento.objects.select_related('ministerio').all().order_by(
+    departamentos = queryset_departamentos_do_usuario(request.user).order_by(
         'ministerio__nome', 'ordem', 'nome'
     )
 
@@ -313,32 +454,47 @@ def painel_departamentos(request):
     if ministerio_id:
         departamentos = departamentos.filter(ministerio_id=ministerio_id)
 
-    ministerios = Ministerio.objects.all().order_by('nome')
+    ministerios = queryset_ministerios_do_usuario(request.user).order_by('nome')
 
     contexto = {
         'departamentos': departamentos,
         'ministerios': ministerios,
         'busca': busca,
         'ministerio_id': ministerio_id,
+        'usuario_pode_gerenciar_tudo': user_can_manage_all(request.user),
     }
     return render(request, 'painel/departamentos_lista.html', contexto)
 
 
 @login_required
 def criar_departamento(request):
+    ensure_user_has_ministerio(request.user)
+
     if request.method == 'POST':
-        form = DepartamentoForm(request.POST, request.FILES)
+        form = DepartamentoForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
-            form.save()
+            departamento = form.save()
+            registrar_auditoria(
+                request.user,
+                RegistroAuditoria.ACAO_CRIAR,
+                'Departamento',
+                registro=departamento,
+                ministerio=departamento.ministerio,
+                descricao=f'Cadastrou o departamento {departamento.nome} da igreja {departamento.ministerio.nome}.',
+            )
+            messages.success(request, 'Departamento cadastrado com sucesso.')
             return redirect('painel_departamentos')
     else:
         ministerio_id = request.GET.get('ministerio')
         initial = {}
+        ministerios = queryset_ministerios_do_usuario(request.user)
 
-        if ministerio_id:
+        if ministerio_id and ministerios.filter(pk=ministerio_id).exists():
             initial['ministerio'] = ministerio_id
+        elif ministerios.count() == 1:
+            initial['ministerio'] = ministerios.first().pk
 
-        form = DepartamentoForm(initial=initial)
+        form = DepartamentoForm(initial=initial, user=request.user)
 
     contexto = {
         'form': form,
@@ -351,15 +507,24 @@ def criar_departamento(request):
 
 @login_required
 def editar_departamento(request, pk):
-    departamento = get_object_or_404(Departamento, pk=pk)
+    departamento = get_object_or_404(queryset_departamentos_do_usuario(request.user), pk=pk)
 
     if request.method == 'POST':
-        form = DepartamentoForm(request.POST, request.FILES, instance=departamento)
+        form = DepartamentoForm(request.POST, request.FILES, instance=departamento, user=request.user)
         if form.is_valid():
-            form.save()
+            departamento = form.save()
+            registrar_auditoria(
+                request.user,
+                RegistroAuditoria.ACAO_EDITAR,
+                'Departamento',
+                registro=departamento,
+                ministerio=departamento.ministerio,
+                descricao=f'Atualizou o departamento {departamento.nome} da igreja {departamento.ministerio.nome}.',
+            )
+            messages.success(request, 'Departamento atualizado com sucesso.')
             return redirect('painel_departamentos')
     else:
-        form = DepartamentoForm(instance=departamento)
+        form = DepartamentoForm(instance=departamento, user=request.user)
 
     contexto = {
         'form': form,
@@ -373,10 +538,19 @@ def editar_departamento(request, pk):
 
 @login_required
 def excluir_departamento(request, pk):
-    departamento = get_object_or_404(Departamento, pk=pk)
+    departamento = get_object_or_404(queryset_departamentos_do_usuario(request.user), pk=pk)
 
     if request.method == 'POST':
+        registrar_auditoria(
+            request.user,
+            RegistroAuditoria.ACAO_EXCLUIR,
+            'Departamento',
+            registro=departamento,
+            ministerio=departamento.ministerio,
+            descricao=f'Excluiu o departamento {departamento.nome} da igreja {departamento.ministerio.nome}.',
+        )
         departamento.delete()
+        messages.success(request, 'Departamento excluído com sucesso.')
         return redirect('painel_departamentos')
 
     contexto = {
@@ -395,7 +569,7 @@ def painel_eventos(request):
     tipo = request.GET.get('tipo', '').strip()
     ministerio_id = request.GET.get('ministerio', '').strip()
 
-    eventos = Evento.objects.select_related('ministerio').all().order_by('data', 'titulo')
+    eventos = queryset_eventos_do_usuario(request.user).order_by('data', 'titulo')
 
     if busca:
         eventos = eventos.filter(titulo__icontains=busca)
@@ -406,7 +580,7 @@ def painel_eventos(request):
     if ministerio_id:
         eventos = eventos.filter(ministerio_id=ministerio_id)
 
-    ministerios = Ministerio.objects.all().order_by('nome')
+    ministerios = queryset_ministerios_do_usuario(request.user).order_by('nome')
 
     contexto = {
         'eventos': eventos,
@@ -414,40 +588,66 @@ def painel_eventos(request):
         'busca': busca,
         'tipo': tipo,
         'ministerio_id': ministerio_id,
+        'usuario_pode_gerenciar_tudo': user_can_manage_all(request.user),
     }
     return render(request, 'painel/eventos_lista.html', contexto)
 
 
 @login_required
 def criar_evento(request):
+    ensure_user_has_ministerio(request.user)
+
     if request.method == 'POST':
-        form = EventoForm(request.POST, request.FILES)
+        form = EventoForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
-            form.save()
+            evento = form.save()
+            registrar_auditoria(
+                request.user,
+                RegistroAuditoria.ACAO_CRIAR,
+                'Evento',
+                registro=evento,
+                ministerio=evento.ministerio,
+                descricao=f'Cadastrou o evento {evento.titulo}.',
+            )
+            messages.success(request, 'Evento cadastrado com sucesso.')
             return redirect('painel_eventos')
     else:
-        form = EventoForm()
+        initial = {}
+        ministerios = queryset_ministerios_do_usuario(request.user)
+        if ministerios.count() == 1:
+            initial['ministerio'] = ministerios.first().pk
+        form = EventoForm(initial=initial, user=request.user)
 
     contexto = {
         'form': form,
         'titulo_pagina': 'Novo Evento',
         'subtitulo_pagina': 'Cadastre um evento local ou geral.',
         'texto_botao': 'Salvar evento',
+        'usuario_pode_gerenciar_tudo': user_can_manage_all(request.user),
     }
     return render(request, 'painel/evento_form.html', contexto)
 
 
 @login_required
 def editar_evento(request, pk):
-    evento = get_object_or_404(Evento, pk=pk)
+    evento = get_object_or_404(queryset_eventos_do_usuario(request.user), pk=pk)
 
     if request.method == 'POST':
-        form = EventoForm(request.POST, request.FILES, instance=evento)
+        form = EventoForm(request.POST, request.FILES, instance=evento, user=request.user)
         if form.is_valid():
-            form.save()
+            evento = form.save()
+            registrar_auditoria(
+                request.user,
+                RegistroAuditoria.ACAO_EDITAR,
+                'Evento',
+                registro=evento,
+                ministerio=evento.ministerio,
+                descricao=f'Atualizou o evento {evento.titulo}.',
+            )
+            messages.success(request, 'Evento atualizado com sucesso.')
             return redirect('painel_eventos')
     else:
-        form = EventoForm(instance=evento)
+        form = EventoForm(instance=evento, user=request.user)
 
     contexto = {
         'form': form,
@@ -455,16 +655,26 @@ def editar_evento(request, pk):
         'titulo_pagina': 'Editar Evento',
         'subtitulo_pagina': f'Atualize as informações de {evento.titulo}.',
         'texto_botao': 'Salvar alterações',
+        'usuario_pode_gerenciar_tudo': user_can_manage_all(request.user),
     }
     return render(request, 'painel/evento_form.html', contexto)
 
 
 @login_required
 def excluir_evento(request, pk):
-    evento = get_object_or_404(Evento, pk=pk)
+    evento = get_object_or_404(queryset_eventos_do_usuario(request.user), pk=pk)
 
     if request.method == 'POST':
+        registrar_auditoria(
+            request.user,
+            RegistroAuditoria.ACAO_EXCLUIR,
+            'Evento',
+            registro=evento,
+            ministerio=evento.ministerio,
+            descricao=f'Excluiu o evento {evento.titulo}.',
+        )
         evento.delete()
+        messages.success(request, 'Evento excluído com sucesso.')
         return redirect('painel_eventos')
 
     contexto = {
