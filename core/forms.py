@@ -1,8 +1,14 @@
 from django import forms
-from .models import Culto, Departamento, Ministerio, Evento
+
+from .access import get_allowed_ministerios, user_can_manage_all
+from .models import Culto, Departamento, Evento, Ministerio
 
 
 class MinisterioForm(forms.ModelForm):
+    def __init__(self, *args, user=None, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = Ministerio
         fields = [
@@ -55,7 +61,15 @@ class MinisterioForm(forms.ModelForm):
         return slug
 
 
-class CultoForm(forms.ModelForm):
+class BasePainelMinisterioForm(forms.ModelForm):
+    def __init__(self, *args, user=None, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+        if 'ministerio' in self.fields:
+            self.fields['ministerio'].queryset = get_allowed_ministerios(user).order_by('nome')
+
+
+class CultoForm(BasePainelMinisterioForm):
     class Meta:
         model = Culto
         fields = [
@@ -76,7 +90,7 @@ class CultoForm(forms.ModelForm):
         }
 
 
-class DepartamentoForm(forms.ModelForm):
+class DepartamentoForm(BasePainelMinisterioForm):
     class Meta:
         model = Departamento
         fields = [
@@ -102,7 +116,14 @@ class DepartamentoForm(forms.ModelForm):
             'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-class EventoForm(forms.ModelForm):
+
+class EventoForm(BasePainelMinisterioForm):
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, user=user, **kwargs)
+        if not user_can_manage_all(user):
+            self.fields['tipo'].choices = [choice for choice in self.fields['tipo'].choices if choice[0] == 'local']
+            self.fields['tipo'].initial = 'local'
+
     class Meta:
         model = Evento
         fields = [
@@ -139,6 +160,9 @@ class EventoForm(forms.ModelForm):
 
         if tipo == 'local' and not ministerio:
             self.add_error('ministerio', 'Selecione uma igreja para evento local.')
+
+        if tipo == 'geral' and not user_can_manage_all(self.user):
+            self.add_error('tipo', 'Somente o administrador geral pode criar eventos gerais.')
 
         if tipo == 'geral':
             cleaned_data['ministerio'] = None

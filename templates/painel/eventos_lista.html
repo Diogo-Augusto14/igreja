@@ -2,7 +2,7 @@
 
 {% block titulo %}Eventos | Painel{% endblock %}
 {% block pagina_titulo %}Eventos cadastrados{% endblock %}
-{% block pagina_subtitulo %}Gerencie eventos locais das igrejas e eventos gerais do ministério.{% endblock %}
+{% block pagina_subtitulo %}Cada usuário gerencia apenas os eventos da própria igreja; o admin geral continua podendo criar eventos gerais.{% endblock %}
 
 {% block topbar_actions %}
 <a href="{% url 'criar_evento' %}" class="btn btn-primary">
@@ -30,7 +30,7 @@
             </select>
 
             <select name="ministerio" class="form-control">
-                <option value="">Todas as igrejas</option>
+                <option value="">{% if usuario_pode_gerenciar_tudo %}Todas as igrejas{% else %}Sua igreja{% endif %}</option>
                 {% for ministerio in ministerios %}
                     <option value="{{ ministerio.id }}" {% if ministerio_id == ministerio.id|stringformat:"s" %}selected{% endif %}>
                         {{ ministerio.nome }}
@@ -96,7 +96,7 @@
 
                         <td>
                             {% if evento.tipo == 'geral' %}
-                                <span style="color:#1d4ed8;font-weight:600;">Todas as igrejas</span>
+                                <span style="color:#1d4ed8;font-weight:600;">{% if usuario_pode_gerenciar_tudo %}Todas as igrejas{% else %}Sua igreja{% endif %}</span>
                             {% elif evento.ministerio %}
                                 {{ evento.ministerio.nome }}
                             {% else %}
