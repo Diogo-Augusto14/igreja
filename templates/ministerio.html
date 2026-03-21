@@ -22,10 +22,17 @@
                     <article class="ministerio-card">
                         <a href="{% url 'detalhe_ministerio' ministerio.slug %}" class="ministerio-card-link">
                             <div class="ministerio-card-image-wrapper">
-                                <img 
-                                    src="{{ ministerio.imagem_capa.url }}" 
-                                    alt="{{ ministerio.nome }}"
-                                >
+                                {% if ministerio.imagem_capa %}
+                                    <img
+                                        src="{{ ministerio.imagem_capa.url }}"
+                                        alt="{{ ministerio.nome }}"
+                                    >
+                                {% else %}
+                                    <img
+                                        src="{% static 'image/logo.png' %}"
+                                        alt="{{ ministerio.nome }}"
+                                    >
+                                {% endif %}
                             </div>
 
                             <div class="ministerio-card-content">
