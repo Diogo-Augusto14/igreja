@@ -95,7 +95,7 @@
 
                             {% if evento.imagem %}
                                 <div class="evento-publico-imagem">
-                                    <img src="{{ evento.imagem.url }}" alt="{{ evento.titulo }}" loading="lazy">
+                                    <img src="{{ evento.imagem.url }}" alt="{{ evento.titulo }}" onerror="this.onerror=null;this.src='{% static 'image/logo.png' %}';" loading="lazy">
                                 </div>
                             {% else %}
                                 <div class="evento-publico-imagem">

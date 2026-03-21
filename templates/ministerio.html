@@ -26,6 +26,7 @@
                                     <img
                                         src="{{ ministerio.imagem_capa.url }}"
                                         alt="{{ ministerio.nome }}"
+                                        onerror="this.onerror=null;this.src='{% static 'image/logo.png' %}';"
                                     >
                                 {% else %}
                                     <img
