@@ -14,7 +14,7 @@
   </head>
   <body>
     <div class="painel-layout">
-      <aside class="sidebar">
+      <aside class="sidebar" id="painelSidebar">
         <div class="brand">
           <span>Painel Administrativo</span>
           <h1>Ministério Redenção</h1>
@@ -70,13 +70,33 @@
         </div>
       </aside>
 
+      <button
+        type="button"
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+        aria-label="Fechar menu lateral"
+      ></button>
+
       <main class="main">
         <div class="topbar">
-          <div>
+          <div class="topbar-heading">
+            <button
+              type="button"
+              class="hamburger-btn"
+              id="hamburgerBtn"
+              aria-label="Abrir menu lateral"
+              aria-controls="painelSidebar"
+              aria-expanded="false"
+            >
+              <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
+            <div>
             <h2>{% block pagina_titulo %}Painel{% endblock %}</h2>
             <p>
               {% block pagina_subtitulo %}Gerencie o conteúdo do sistema.{% endblock %}
             </p>
+          </div>
+
           </div>
 
           <div class="topbar-actions" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
@@ -119,5 +139,45 @@
         {% block conteudo %}{% endblock %}
       </main>
     </div>
+    <script>
+      (() => {
+        const body = document.body;
+        const menuButton = document.getElementById('hamburgerBtn');
+        const overlay = document.getElementById('sidebarOverlay');
+        const sidebarLinks = document.querySelectorAll('.sidebar .menu a');
+        const mobileBreakpoint = 980;
+
+        if (!menuButton || !overlay) return;
+
+        function setMenuState(isOpen) {
+          body.classList.toggle('sidebar-open', isOpen);
+          menuButton.setAttribute('aria-expanded', String(isOpen));
+        }
+
+        menuButton.addEventListener('click', () => {
+          setMenuState(!body.classList.contains('sidebar-open'));
+        });
+
+        overlay.addEventListener('click', () => setMenuState(false));
+
+        sidebarLinks.forEach((link) => {
+          link.addEventListener('click', () => {
+            if (window.innerWidth <= mobileBreakpoint) {
+              setMenuState(false);
+            }
+          });
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') setMenuState(false);
+        });
+
+        window.addEventListener('resize', () => {
+          if (window.innerWidth > mobileBreakpoint) {
+            setMenuState(false);
+          }
+        });
+      })();
+    </script>
   </body>
 </html>
