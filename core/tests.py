@@ -57,6 +57,16 @@ class PainelAcessoPorIgrejaTests(TestCase):
         self.assertContains(response, 'Igreja 1')
         self.assertNotContains(response, 'Igreja 2')
 
+    def test_pagina_publica_ministerios_funciona_sem_imagem_de_capa(self):
+        self.igreja_1.imagem_capa.delete(save=False)
+        self.igreja_1.imagem_capa = ''
+        self.igreja_1.save()
+
+        response = self.client.get(reverse('ministerio'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'image/logo.png')
+
     def test_usuario_comum_ve_apenas_cultos_da_propria_igreja(self):
         self.client.login(username='igreja1', password='123456')
 
