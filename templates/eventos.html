@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+<title>Eventos | Ministerio Redencao</title>
+{% endblock %}
+
+{% block conteudo %}
+<main>
+    <section class="section bg-light ministerio-page-section">
+        <div class="container fade-in">
+            <div class="section-header">
+                <h2>Eventos</h2>
+                <p>Veja os eventos gerais do ministerio e use filtros opcionais para segmentar por igreja, gratuidade e publico.</p>
+            </div>
+
+            <form method="get" class="eventos-filtros-card">
+                <div class="eventos-filtros-grid">
+                    <div class="eventos-filtro-item">
+                        <label for="filtro-ministerio">Igreja</label>
+                        <select id="filtro-ministerio" name="ministerio">
+                            <option value="">Todos os eventos gerais</option>
+                            {% for ministerio in ministerios %}
+                                <option value="{{ ministerio.id }}" {% if ministerio_id == ministerio.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ ministerio.nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="eventos-filtro-item">
+                        <label for="filtro-publico">Publico</label>
+                        <select id="filtro-publico" name="publico">
+                            <option value="">Todos os publicos</option>
+                            {% for value, label in publico_choices %}
+                                <option value="{{ value }}" {% if publico == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <label class="eventos-filtro-checkbox">
+                        <input type="checkbox" name="gratuito" value="1" {% if apenas_gratuitos %}checked{% endif %}>
+                        <span>Somente eventos gratuitos</span>
+                    </label>
+
+                    <div class="eventos-filtros-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-filter"></i>
+                            Filtrar
+                        </button>
+                        <a href="{% url 'eventos' %}" class="btn-abas">Limpar</a>
+                    </div>
+                </div>
+            </form>
+
+            {% if eventos %}
+                <div class="eventos-lista fade-in">
+                    {% for evento in eventos %}
+                        <article class="evento-publico-card">
+                            <div class="evento-publico-data">
+                                <span class="dia">{{ evento.data|date:"d" }}</span>
+                                <span class="mes">{{ evento.data|date:"M"|upper }}</span>
+                            </div>
+
+                            <div class="evento-publico-conteudo">
+                                <div class="evento-publico-topo">
+                                    <h3>{{ evento.titulo }}</h3>
+                                    <span class="evento-tipo-badge {% if evento.tipo == 'geral' %}geral{% else %}local{% endif %}">
+                                        {% if evento.tipo == 'geral' %}Evento geral{% else %}Evento da igreja{% endif %}
+                                    </span>
+                                </div>
+
+                                {% if evento.descricao %}
+                                    <p>{{ evento.descricao }}</p>
+                                {% endif %}
+
+                                <div class="evento-publico-meta">
+                                    {% if evento.horario %}
+                                        <span><i class="fas fa-clock"></i> {{ evento.horario }}</span>
+                                    {% endif %}
+                                    {% if evento.local %}
+                                        <span><i class="fas fa-location-dot"></i> {{ evento.local }}</span>
+                                    {% endif %}
+                                    {% if evento.ministerio %}
+                                        <span><i class="fas fa-church"></i> {{ evento.ministerio.nome }}</span>
+                                    {% endif %}
+                                    <span><i class="fas fa-users"></i> {{ evento.get_publico_display }}</span>
+                                    {% if evento.gratuito %}
+                                        <span><i class="fas fa-ticket"></i> Gratuito</span>
+                                    {% else %}
+                                        <span><i class="fas fa-ticket"></i> Pago</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            {% if evento.imagem %}
+                                <div class="evento-publico-imagem">
+                                    <img src="{{ evento.imagem.url }}" alt="{{ evento.titulo }}" loading="lazy">
+                                </div>
+                            {% else %}
+                                <div class="evento-publico-imagem">
+                                    <img src="{% static 'image/logo.png' %}" alt="{{ evento.titulo }}" loading="lazy">
+                                </div>
+                            {% endif %}
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="evento-vazio-card fade-in">
+                    <i class="fas fa-calendar-days"></i>
+                    <h3>Nenhum evento encontrado</h3>
+                    <p>Ajuste os filtros ou volte para a listagem geral.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</main>
+{% endblock %}

@@ -76,6 +76,23 @@
                 {{ form.local.errors }}
             </div>
 
+            <div class="form-group">
+                <label for="{{ form.publico.id_for_label }}">Publico alvo</label>
+                {{ form.publico }}
+                {{ form.publico.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Condicoes</label>
+                <div class="form-check-row">
+                    <div class="form-check">
+                        {{ form.gratuito }}
+                        <label for="{{ form.gratuito.id_for_label }}">Evento gratuito</label>
+                    </div>
+                </div>
+                {{ form.gratuito.errors }}
+            </div>
+
             <div class="form-group full">
                 <label for="{{ form.imagem.id_for_label }}">Imagem do evento</label>
                 {{ form.imagem }}

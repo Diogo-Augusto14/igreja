@@ -14,7 +14,14 @@ from .access import (
     get_user_ministerio,
     user_can_manage_all,
 )
-from .forms import CultoForm, DepartamentoForm, EventoForm, MinisterioForm
+from .forms import (
+    CultoForm,
+    CultoInlineFormSet,
+    DepartamentoForm,
+    DepartamentoInlineFormSet,
+    EventoForm,
+    MinisterioForm,
+)
 from .models import Culto, Departamento, Evento, Ministerio, RegistroAuditoria
 
 
@@ -51,6 +58,40 @@ def ministerio(request):
         'ministerios': ministerios,
     }
     return render(request, 'ministerio.html', contexto)
+
+
+def eventos(request):
+    ministerio_id = request.GET.get('ministerio', '').strip()
+    apenas_gratuitos = request.GET.get('gratuito', '').strip() == '1'
+    publico = request.GET.get('publico', '').strip()
+
+    ministerios = Ministerio.objects.filter(ativo=True).order_by('ordem', 'nome')
+
+    eventos_qs = Evento.objects.filter(ativo=True)
+
+    # Exibicao padrao: somente eventos gerais.
+    if not ministerio_id:
+        eventos_qs = eventos_qs.filter(tipo='geral')
+    else:
+        eventos_qs = eventos_qs.filter(Q(tipo='geral') | Q(tipo='local', ministerio_id=ministerio_id))
+
+    if apenas_gratuitos:
+        eventos_qs = eventos_qs.filter(gratuito=True)
+
+    if publico:
+        eventos_qs = eventos_qs.filter(publico=publico)
+
+    eventos_qs = eventos_qs.select_related('ministerio').order_by('data', 'titulo')
+
+    contexto = {
+        'eventos': eventos_qs,
+        'ministerios': ministerios,
+        'ministerio_id': ministerio_id,
+        'apenas_gratuitos': apenas_gratuitos,
+        'publico': publico,
+        'publico_choices': Evento.PUBLICO_CHOICES,
+    }
+    return render(request, 'eventos.html', contexto)
 
 
 def detalhe_ministerio(request, slug):
@@ -223,10 +264,18 @@ def criar_ministerio(request):
         messages.error(request, 'Somente o administrador geral pode cadastrar novas igrejas.')
         return redirect('painel_ministerios')
 
+    ministerio = Ministerio()
+
     if request.method == 'POST':
-        form = MinisterioForm(request.POST, request.FILES, user=request.user)
-        if form.is_valid():
+        form = MinisterioForm(request.POST, request.FILES, instance=ministerio, user=request.user)
+        cultos_formset = CultoInlineFormSet(request.POST, instance=ministerio, prefix='cultos')
+        departamentos_formset = DepartamentoInlineFormSet(request.POST, instance=ministerio, prefix='departamentos')
+        if form.is_valid() and cultos_formset.is_valid() and departamentos_formset.is_valid():
             ministerio = form.save()
+            cultos_formset.instance = ministerio
+            departamentos_formset.instance = ministerio
+            cultos_formset.save()
+            departamentos_formset.save()
             registrar_auditoria(
                 request.user,
                 RegistroAuditoria.ACAO_CRIAR,
@@ -238,10 +287,14 @@ def criar_ministerio(request):
             messages.success(request, 'Igreja cadastrada com sucesso.')
             return redirect('painel_ministerios')
     else:
-        form = MinisterioForm(user=request.user)
+        form = MinisterioForm(instance=ministerio, user=request.user)
+        cultos_formset = CultoInlineFormSet(instance=ministerio, prefix='cultos')
+        departamentos_formset = DepartamentoInlineFormSet(instance=ministerio, prefix='departamentos')
 
     contexto = {
         'form': form,
+        'cultos_formset': cultos_formset,
+        'departamentos_formset': departamentos_formset,
         'titulo_pagina': 'Nova Igreja',
         'subtitulo_pagina': 'Cadastre uma nova congregação do Ministério Redenção.',
         'texto_botao': 'Salvar igreja',
@@ -256,8 +309,12 @@ def editar_ministerio(request, pk):
 
     if request.method == 'POST':
         form = MinisterioForm(request.POST, request.FILES, instance=ministerio, user=request.user)
-        if form.is_valid():
+        cultos_formset = CultoInlineFormSet(request.POST, instance=ministerio, prefix='cultos')
+        departamentos_formset = DepartamentoInlineFormSet(request.POST, instance=ministerio, prefix='departamentos')
+        if form.is_valid() and cultos_formset.is_valid() and departamentos_formset.is_valid():
             ministerio = form.save()
+            cultos_formset.save()
+            departamentos_formset.save()
             registrar_auditoria(
                 request.user,
                 RegistroAuditoria.ACAO_EDITAR,
@@ -270,9 +327,13 @@ def editar_ministerio(request, pk):
             return redirect('painel_ministerios')
     else:
         form = MinisterioForm(instance=ministerio, user=request.user)
+        cultos_formset = CultoInlineFormSet(instance=ministerio, prefix='cultos')
+        departamentos_formset = DepartamentoInlineFormSet(instance=ministerio, prefix='departamentos')
 
     contexto = {
         'form': form,
+        'cultos_formset': cultos_formset,
+        'departamentos_formset': departamentos_formset,
         'ministerio': ministerio,
         'titulo_pagina': 'Editar Igreja',
         'subtitulo_pagina': f'Atualize as informações de {ministerio.nome}.',
@@ -568,6 +629,8 @@ def painel_eventos(request):
     busca = request.GET.get('busca', '').strip()
     tipo = request.GET.get('tipo', '').strip()
     ministerio_id = request.GET.get('ministerio', '').strip()
+    gratuito = request.GET.get('gratuito', '').strip()
+    publico = request.GET.get('publico', '').strip()
 
     eventos = queryset_eventos_do_usuario(request.user).order_by('data', 'titulo')
 
@@ -580,6 +643,12 @@ def painel_eventos(request):
     if ministerio_id:
         eventos = eventos.filter(ministerio_id=ministerio_id)
 
+    if gratuito == '1':
+        eventos = eventos.filter(gratuito=True)
+
+    if publico:
+        eventos = eventos.filter(publico=publico)
+
     ministerios = queryset_ministerios_do_usuario(request.user).order_by('nome')
 
     contexto = {
@@ -588,6 +657,9 @@ def painel_eventos(request):
         'busca': busca,
         'tipo': tipo,
         'ministerio_id': ministerio_id,
+        'gratuito': gratuito,
+        'publico': publico,
+        'publico_choices': Evento.PUBLICO_CHOICES,
         'usuario_pode_gerenciar_tudo': user_can_manage_all(request.user),
     }
     return render(request, 'painel/eventos_lista.html', contexto)

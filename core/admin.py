@@ -89,8 +89,8 @@ class DepartamentoAdmin(admin.ModelAdmin):
 
 @admin.register(Evento)
 class EventoAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'tipo', 'ministerio', 'data', 'ativo', 'destaque')
-    list_filter = ('tipo', 'ativo', 'destaque', 'ministerio')
+    list_display = ('titulo', 'tipo', 'ministerio', 'publico', 'gratuito', 'data', 'ativo', 'destaque')
+    list_filter = ('tipo', 'publico', 'gratuito', 'ativo', 'destaque', 'ministerio')
     search_fields = ('titulo', 'slug', 'ministerio__nome', 'local')
     ordering = ('data', 'titulo')
     autocomplete_fields = ('ministerio',)

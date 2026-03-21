@@ -191,6 +191,17 @@ class Departamento(models.Model):
 
 
 class Evento(models.Model):
+    PUBLICO_MASCULINO = 'masculino'
+    PUBLICO_FEMININO = 'feminino'
+    PUBLICO_INFANTIL = 'infantil'
+    PUBLICO_OUTROS = 'outros'
+    PUBLICO_CHOICES = [
+        (PUBLICO_MASCULINO, 'Masculino'),
+        (PUBLICO_FEMININO, 'Feminino'),
+        (PUBLICO_INFANTIL, 'Infantil'),
+        (PUBLICO_OUTROS, 'Outros'),
+    ]
+
     TIPO_CHOICES = [
         ('local', 'Evento da igreja'),
         ('geral', 'Evento geral'),
@@ -217,6 +228,12 @@ class Evento(models.Model):
     data = models.DateField()
     horario = models.CharField(max_length=50, blank=True, null=True)
     local = models.CharField(max_length=200, blank=True, null=True)
+    gratuito = models.BooleanField(default=True)
+    publico = models.CharField(
+        max_length=20,
+        choices=PUBLICO_CHOICES,
+        default=PUBLICO_OUTROS,
+    )
 
     imagem = models.ImageField(
         upload_to='eventos/',

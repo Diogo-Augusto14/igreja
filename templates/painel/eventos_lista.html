@@ -14,7 +14,7 @@
 {% block conteudo %}
 <div class="card">
     <div class="toolbar">
-        <form method="get" class="search-form" style="max-width: 100%; display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 12px;">
+        <form method="get" class="search-form" style="max-width: 100%; display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr auto auto; gap: 12px;">
             <input
                 type="text"
                 name="busca"
@@ -38,6 +38,18 @@
                 {% endfor %}
             </select>
 
+            <select name="publico" class="form-control">
+                <option value="">Todos os publicos</option>
+                {% for value, label in publico_choices %}
+                    <option value="{{ value }}" {% if publico == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <label class="form-check" style="align-self:center; margin-left:4px;">
+                <input type="checkbox" name="gratuito" value="1" {% if gratuito == '1' %}checked{% endif %}>
+                <span>Somente gratuitos</span>
+            </label>
+
             <button type="submit" class="btn btn-light">
                 <i class="fas fa-search"></i>
                 Filtrar
@@ -57,6 +69,8 @@
                         <th>Data</th>
                         <th>Horário</th>
                         <th>Local</th>
+                        <th>Publico</th>
+                        <th>Valor</th>
                         <th>Status</th>
                         <th>Destaque</th>
                         <th>Ações</th>
@@ -119,6 +133,16 @@
                                 {{ evento.local }}
                             {% else %}
                                 <span style="color:#94a3b8;">Não informado</span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ evento.get_publico_display }}</td>
+
+                        <td>
+                            {% if evento.gratuito %}
+                                <span class="badge badge-success">Gratuito</span>
+                            {% else %}
+                                <span class="badge badge-warning">Pago</span>
                             {% endif %}
                         </td>
 

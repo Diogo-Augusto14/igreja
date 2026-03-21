@@ -266,6 +266,34 @@ button {
     margin-top: 24px;
 }
 
+.dynamic-section {
+    display: grid;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.dynamic-items {
+    display: grid;
+    gap: 12px;
+}
+
+.dynamic-item {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fff;
+    padding: 14px;
+}
+
+.dynamic-item-hidden {
+    display: none;
+}
+
+.dynamic-actions {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

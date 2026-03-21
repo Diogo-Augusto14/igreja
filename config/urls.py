@@ -15,6 +15,7 @@ from core.views import (
     excluir_culto,
     excluir_departamento,
     excluir_ministerio,
+    eventos,
     home,
     ministerio,
     painel_cultos,
@@ -33,6 +34,7 @@ urlpatterns = [
 
     path('', home, name='home'),
     path('ministerio/', ministerio, name='ministerio'),
+    path('eventos/', eventos, name='eventos'),
     path('ministerio/<slug:slug>/', detalhe_ministerio, name='detalhe_ministerio'),
 
     path('painel/', painel_home, name='painel_home'),

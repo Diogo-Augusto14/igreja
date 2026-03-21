@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import inlineformset_factory
 
 from .access import get_allowed_ministerios, user_can_manage_all
 from .models import Culto, Departamento, Evento, Ministerio
@@ -30,17 +31,17 @@ class MinisterioForm(forms.ModelForm):
             'ordem',
         ]
         widgets = {
-            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Ministério Redenção Sagrada Família'}),
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Ministerio Redencao Sagrada Familia'}),
             'slug': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: ministerio-redencao-sagrada-familia'}),
-            'subtitulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Uma igreja para toda a família'}),
+            'subtitulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Uma igreja para toda a familia'}),
             'resumo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Resumo curto para o card'}),
-            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 6, 'placeholder': 'Descrição completa da congregação'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 6, 'placeholder': 'Descricao completa da congregacao'}),
             'pastor_nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do pastor'}),
             'pastora_nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da pastora'}),
             'foto_casal_lideranca': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'local': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Bairro Sagrada Família - Divinópolis/MG'}),
+            'local': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Bairro Sagrada Familia - Divinopolis/MG'}),
             'contato': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone / WhatsApp'}),
-            'versiculo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: João 3:16'}),
+            'versiculo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Joao 3:16'}),
             'imagem_capa': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'imagem_principal': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -56,7 +57,7 @@ class MinisterioForm(forms.ModelForm):
             qs = qs.exclude(pk=self.instance.pk)
 
         if qs.exists():
-            raise forms.ValidationError('Já existe uma igreja com esse slug.')
+            raise forms.ValidationError('Ja existe uma igreja com esse slug.')
 
         return slug
 
@@ -83,7 +84,7 @@ class CultoForm(BasePainelMinisterioForm):
         widgets = {
             'ministerio': forms.Select(attrs={'class': 'form-control'}),
             'dia': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Domingo'}),
-            'horario': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 18:00 Oração / 19:00 Culto'}),
+            'horario': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 18:00 Oracao / 19:00 Culto'}),
             'descricao': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Culto principal da semana'}),
             'ordem': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0'}),
             'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -106,12 +107,52 @@ class DepartamentoForm(BasePainelMinisterioForm):
         ]
         widgets = {
             'ministerio': forms.Select(attrs={'class': 'form-control'}),
-            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Ministério Infantil'}),
-            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Descreva a função desse departamento'}),
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Ministerio Infantil'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Descreva a funcao desse departamento'}),
             'imagem': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'lider_nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do líder'}),
-            'lider_nome_esposa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da líder'}),
+            'lider_nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do lider'}),
+            'lider_nome_esposa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da lider'}),
             'foto_lideranca': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'ordem': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0'}),
+            'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+
+class CultoInlineForm(forms.ModelForm):
+    class Meta:
+        model = Culto
+        fields = [
+            'dia',
+            'horario',
+            'descricao',
+            'ordem',
+            'ativo',
+        ]
+        widgets = {
+            'dia': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Domingo'}),
+            'horario': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 19:00'}),
+            'descricao': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Culto da familia'}),
+            'ordem': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0'}),
+            'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+
+class DepartamentoInlineForm(forms.ModelForm):
+    class Meta:
+        model = Departamento
+        fields = [
+            'nome',
+            'descricao',
+            'lider_nome',
+            'lider_nome_esposa',
+            'ordem',
+            'ativo',
+        ]
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Ministerio Infantil'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Descricao do departamento'}),
+            'lider_nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do lider'}),
+            'lider_nome_esposa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da lider'}),
             'ordem': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0'}),
             'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
@@ -135,19 +176,23 @@ class EventoForm(BasePainelMinisterioForm):
             'data',
             'horario',
             'local',
+            'gratuito',
+            'publico',
             'imagem',
             'ativo',
             'destaque',
         ]
         widgets = {
-            'titulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 12 horas de adoração'}),
+            'titulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 12 horas de adoracao'}),
             'slug': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 12-horas-de-adoracao'}),
-            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Descrição do evento'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Descricao do evento'}),
             'tipo': forms.Select(attrs={'class': 'form-control'}),
             'ministerio': forms.Select(attrs={'class': 'form-control'}),
             'data': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'horario': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 19:00'}),
-            'local': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Sede - Divinópolis/MG'}),
+            'local': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: Sede - Divinopolis/MG'}),
+            'gratuito': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'publico': forms.Select(attrs={'class': 'form-control'}),
             'imagem': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'destaque': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -168,3 +213,20 @@ class EventoForm(BasePainelMinisterioForm):
             cleaned_data['ministerio'] = None
 
         return cleaned_data
+
+
+CultoInlineFormSet = inlineformset_factory(
+    Ministerio,
+    Culto,
+    form=CultoInlineForm,
+    extra=1,
+    can_delete=True,
+)
+
+DepartamentoInlineFormSet = inlineformset_factory(
+    Ministerio,
+    Departamento,
+    form=DepartamentoInlineForm,
+    extra=1,
+    can_delete=True,
+)

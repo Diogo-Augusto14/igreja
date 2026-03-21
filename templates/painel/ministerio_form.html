@@ -14,12 +14,18 @@
 {% block conteudo %}
 <div class="card">
     <div class="painel-section-title">
-        <h3>Informações principais da congregação</h3>
-        <p>Cadastre os dados principais da igreja que será exibida no site público.</p>
+        <h3>Informacoes principais da congregacao</h3>
+        <p>Cadastre os dados principais da igreja que sera exibida no site publico.</p>
     </div>
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="danger-box">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
 
         <div class="form-grid">
             <div class="form-group">
@@ -35,7 +41,7 @@
             </div>
 
             <div class="form-group full">
-                <label for="{{ form.subtitulo.id_for_label }}">Subtítulo</label>
+                <label for="{{ form.subtitulo.id_for_label }}">Subtitulo</label>
                 {{ form.subtitulo }}
                 {{ form.subtitulo.errors }}
             </div>
@@ -47,7 +53,7 @@
             </div>
 
             <div class="form-group full">
-                <label for="{{ form.descricao.id_for_label }}">Descrição completa</label>
+                <label for="{{ form.descricao.id_for_label }}">Descricao completa</label>
                 {{ form.descricao }}
                 {{ form.descricao.errors }}
             </div>
@@ -55,7 +61,7 @@
 
         <div class="painel-section-title form-block-space">
             <h3>Casal pastoral</h3>
-            <p>Cada igreja terá seu casal pastoral como liderança principal.</p>
+            <p>Cada igreja tera seu casal pastoral como lideranca principal.</p>
         </div>
 
         <div class="form-grid">
@@ -85,13 +91,13 @@
         </div>
 
         <div class="painel-section-title form-block-space">
-            <h3>Informações gerais</h3>
-            <p>Essas informações ajudam a apresentar melhor a igreja para quem visitar o site.</p>
+            <h3>Informacoes gerais</h3>
+            <p>Essas informacoes ajudam a apresentar melhor a igreja para quem visitar o site.</p>
         </div>
 
         <div class="form-grid">
             <div class="form-group">
-                <label for="{{ form.local.id_for_label }}">Local / endereço / bairro</label>
+                <label for="{{ form.local.id_for_label }}">Local / endereco / bairro</label>
                 {{ form.local }}
                 {{ form.local.errors }}
             </div>
@@ -103,7 +109,7 @@
             </div>
 
             <div class="form-group full">
-                <label for="{{ form.versiculo.id_for_label }}">Versículo</label>
+                <label for="{{ form.versiculo.id_for_label }}">Versiculo</label>
                 {{ form.versiculo }}
                 {{ form.versiculo.errors }}
             </div>
@@ -111,7 +117,7 @@
 
         <div class="painel-section-title form-block-space">
             <h3>Imagens da igreja</h3>
-            <p>Use imagens de boa qualidade para valorizar a apresentação da congregação.</p>
+            <p>Use imagens de boa qualidade para valorizar a apresentacao da congregacao.</p>
         </div>
 
         <div class="form-grid">
@@ -141,8 +147,217 @@
         </div>
 
         <div class="painel-section-title form-block-space">
-            <h3>Organização do site</h3>
-            <p>Essas opções controlam visibilidade e ordem de exibição.</p>
+            <h3>Cultos vinculados a igreja</h3>
+            <p>Gerencie os cultos diretamente dentro do cadastro da igreja com lista dinamica.</p>
+        </div>
+
+        <div class="dynamic-section">
+            {{ cultos_formset.management_form }}
+            {% if cultos_formset.non_form_errors %}
+                <div class="danger-box">{{ cultos_formset.non_form_errors }}</div>
+            {% endif %}
+
+            <div class="dynamic-items" id="cultos-items">
+                {% for culto_form in cultos_formset %}
+                    <div class="dynamic-item">
+                        {% for hidden in culto_form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="{{ culto_form.dia.id_for_label }}">Dia</label>
+                                {{ culto_form.dia }}
+                                {{ culto_form.dia.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ culto_form.horario.id_for_label }}">Horario</label>
+                                {{ culto_form.horario }}
+                                {{ culto_form.horario.errors }}
+                            </div>
+                            <div class="form-group full">
+                                <label for="{{ culto_form.descricao.id_for_label }}">Descricao</label>
+                                {{ culto_form.descricao }}
+                                {{ culto_form.descricao.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ culto_form.ordem.id_for_label }}">Ordem</label>
+                                {{ culto_form.ordem }}
+                                {{ culto_form.ordem.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <div class="form-check-row">
+                                    <div class="form-check">
+                                        {{ culto_form.ativo }}
+                                        <label for="{{ culto_form.ativo.id_for_label }}">Ativo</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dynamic-actions">
+                            <div style="display:none;">{{ culto_form.DELETE }}</div>
+                            <button type="button" class="btn btn-sm btn-delete dynamic-remove-btn">- Remover culto</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <template id="cultos-empty-template">
+                <div class="dynamic-item">
+                    {% for hidden in cultos_formset.empty_form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="{{ cultos_formset.empty_form.dia.id_for_label }}">Dia</label>
+                            {{ cultos_formset.empty_form.dia }}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ cultos_formset.empty_form.horario.id_for_label }}">Horario</label>
+                            {{ cultos_formset.empty_form.horario }}
+                        </div>
+                        <div class="form-group full">
+                            <label for="{{ cultos_formset.empty_form.descricao.id_for_label }}">Descricao</label>
+                            {{ cultos_formset.empty_form.descricao }}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ cultos_formset.empty_form.ordem.id_for_label }}">Ordem</label>
+                            {{ cultos_formset.empty_form.ordem }}
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <div class="form-check-row">
+                                <div class="form-check">
+                                    {{ cultos_formset.empty_form.ativo }}
+                                    <label for="{{ cultos_formset.empty_form.ativo.id_for_label }}">Ativo</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dynamic-actions">
+                        <div style="display:none;">{{ cultos_formset.empty_form.DELETE }}</div>
+                        <button type="button" class="btn btn-sm btn-delete dynamic-remove-btn">- Remover culto</button>
+                    </div>
+                </div>
+            </template>
+
+            <button type="button" class="btn btn-light dynamic-add-btn" data-prefix="cultos" data-target="cultos-items" data-template="cultos-empty-template">
+                + Adicionar culto
+            </button>
+        </div>
+
+        <div class="painel-section-title form-block-space">
+            <h3>Departamentos vinculados a igreja</h3>
+            <p>Gerencie os departamentos no mesmo CRUD com adicao e remocao dinamica.</p>
+        </div>
+
+        <div class="dynamic-section">
+            {{ departamentos_formset.management_form }}
+            {% if departamentos_formset.non_form_errors %}
+                <div class="danger-box">{{ departamentos_formset.non_form_errors }}</div>
+            {% endif %}
+
+            <div class="dynamic-items" id="departamentos-items">
+                {% for departamento_form in departamentos_formset %}
+                    <div class="dynamic-item">
+                        {% for hidden in departamento_form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="{{ departamento_form.nome.id_for_label }}">Nome</label>
+                                {{ departamento_form.nome }}
+                                {{ departamento_form.nome.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ departamento_form.ordem.id_for_label }}">Ordem</label>
+                                {{ departamento_form.ordem }}
+                                {{ departamento_form.ordem.errors }}
+                            </div>
+                            <div class="form-group full">
+                                <label for="{{ departamento_form.descricao.id_for_label }}">Descricao</label>
+                                {{ departamento_form.descricao }}
+                                {{ departamento_form.descricao.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ departamento_form.lider_nome.id_for_label }}">Lider</label>
+                                {{ departamento_form.lider_nome }}
+                                {{ departamento_form.lider_nome.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ departamento_form.lider_nome_esposa.id_for_label }}">Lideranca auxiliar</label>
+                                {{ departamento_form.lider_nome_esposa }}
+                                {{ departamento_form.lider_nome_esposa.errors }}
+                            </div>
+                            <div class="form-group full">
+                                <label>Status</label>
+                                <div class="form-check-row">
+                                    <div class="form-check">
+                                        {{ departamento_form.ativo }}
+                                        <label for="{{ departamento_form.ativo.id_for_label }}">Ativo</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dynamic-actions">
+                            <div style="display:none;">{{ departamento_form.DELETE }}</div>
+                            <button type="button" class="btn btn-sm btn-delete dynamic-remove-btn">- Remover departamento</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <template id="departamentos-empty-template">
+                <div class="dynamic-item">
+                    {% for hidden in departamentos_formset.empty_form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="{{ departamentos_formset.empty_form.nome.id_for_label }}">Nome</label>
+                            {{ departamentos_formset.empty_form.nome }}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ departamentos_formset.empty_form.ordem.id_for_label }}">Ordem</label>
+                            {{ departamentos_formset.empty_form.ordem }}
+                        </div>
+                        <div class="form-group full">
+                            <label for="{{ departamentos_formset.empty_form.descricao.id_for_label }}">Descricao</label>
+                            {{ departamentos_formset.empty_form.descricao }}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ departamentos_formset.empty_form.lider_nome.id_for_label }}">Lider</label>
+                            {{ departamentos_formset.empty_form.lider_nome }}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ departamentos_formset.empty_form.lider_nome_esposa.id_for_label }}">Lideranca auxiliar</label>
+                            {{ departamentos_formset.empty_form.lider_nome_esposa }}
+                        </div>
+                        <div class="form-group full">
+                            <label>Status</label>
+                            <div class="form-check-row">
+                                <div class="form-check">
+                                    {{ departamentos_formset.empty_form.ativo }}
+                                    <label for="{{ departamentos_formset.empty_form.ativo.id_for_label }}">Ativo</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dynamic-actions">
+                        <div style="display:none;">{{ departamentos_formset.empty_form.DELETE }}</div>
+                        <button type="button" class="btn btn-sm btn-delete dynamic-remove-btn">- Remover departamento</button>
+                    </div>
+                </div>
+            </template>
+
+            <button type="button" class="btn btn-light dynamic-add-btn" data-prefix="departamentos" data-target="departamentos-items" data-template="departamentos-empty-template">
+                + Adicionar departamento
+            </button>
+        </div>
+
+        <div class="painel-section-title form-block-space">
+            <h3>Organizacao do site</h3>
+            <p>Essas opcoes controlam visibilidade e ordem de exibicao.</p>
         </div>
 
         <div class="form-grid">
@@ -153,7 +368,7 @@
             </div>
 
             <div class="form-group">
-                <label>Configurações</label>
+                <label>Configuracoes</label>
                 <div class="form-check-row">
                     <div class="form-check">
                         {{ form.ativo }}
@@ -182,4 +397,50 @@
         </div>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        function bindRemoveButtons(scope) {
+            scope.querySelectorAll('.dynamic-remove-btn').forEach((button) => {
+                if (button.dataset.bound === '1') return;
+                button.dataset.bound = '1';
+
+                button.addEventListener('click', function () {
+                    const item = button.closest('.dynamic-item');
+                    if (!item) return;
+
+                    const deleteInput = item.querySelector('input[type="checkbox"][name$="-DELETE"]');
+                    if (deleteInput) {
+                        deleteInput.checked = true;
+                        item.classList.add('dynamic-item-hidden');
+                    } else {
+                        item.remove();
+                    }
+                });
+            });
+        }
+
+        document.querySelectorAll('.dynamic-add-btn').forEach((button) => {
+            button.addEventListener('click', function () {
+                const prefix = button.dataset.prefix;
+                const targetId = button.dataset.target;
+                const templateId = button.dataset.template;
+
+                const totalForms = document.getElementById(`id_${prefix}-TOTAL_FORMS`);
+                const target = document.getElementById(targetId);
+                const template = document.getElementById(templateId);
+
+                if (!totalForms || !target || !template) return;
+
+                const formIndex = parseInt(totalForms.value, 10);
+                const html = template.innerHTML.replace(/__prefix__/g, formIndex);
+                target.insertAdjacentHTML('beforeend', html);
+                totalForms.value = formIndex + 1;
+                bindRemoveButtons(target);
+            });
+        });
+
+        bindRemoveButtons(document);
+    });
+</script>
 {% endblock %}

@@ -29,12 +29,8 @@
                 <a href="{% url 'home' %}#sobre">Quem Somos</a>
                 <a href="{% url 'ministerio' %}">Ministérios</a>
                 <a href="{% url 'home' %}#social">Ação Social</a>
-                <a href="{% url 'home' %}#galeria">Nossa Vida</a>
+                <a href="{% url 'eventos' %}">Eventos</a>
             </nav>
-
-            <a href="#assista" class="btn-primary">
-                <i class="fas fa-play-circle"></i> Assista Online
-            </a>
         </div>
     </header>
 
@@ -60,7 +56,7 @@
                     <li><a href="{% url 'ministerio' %}">Ministérios</a></li>
                     <li><a href="{% url 'home' %}#social">Projetos Sociais</a></li>
                     <li><a href="#">Programação</a></li>
-                    <li><a href="#">Eventos</a></li>
+                    <li><a href="{% url 'eventos' %}">Eventos</a></li>
                 </ul>
             </div>
 
