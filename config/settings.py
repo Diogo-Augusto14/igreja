@@ -144,7 +144,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # ARQUIVOS DE MÍDIA
 # ==================================================
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = Path('/var/data/media') if os.environ.get('RENDER') else BASE_DIR / 'media'
 
 # ==================================================
 # CHAVE PRIMÁRIA PADRÃO
